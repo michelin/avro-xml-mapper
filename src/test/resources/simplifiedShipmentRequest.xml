@@ -1,0 +1,122 @@
+<noprefixns:ProcessShipment xmlns:noprefixns="http://www.openapplications.org/oagis/9" xmlns:gic="http://www.gic.michelin.com/oagis/9/michelin/1">
+    <gic:ApplicationArea>
+        <noprefixns:Sender>
+            <noprefixns:LogicalID>GCA</noprefixns:LogicalID>
+        </noprefixns:Sender>
+    </gic:ApplicationArea>
+    <noprefixns:DataArea>
+        <gic:Shipment>
+            <gic:ShipmentHeader>
+                <gic:DocumentID>
+                    <noprefixns:ID>GCA1763097200909-1</noprefixns:ID>
+                </gic:DocumentID>
+                <noprefixns:DocumentDateTime>2020-09-09T00:00:00Z</noprefixns:DocumentDateTime>
+                <gic:DocumentReference type="OrderNumber">
+                    <gic:DocumentID>
+                        <noprefixns:ID>GCA1763097200909-1</noprefixns:ID>
+                    </gic:DocumentID>
+                </gic:DocumentReference>
+                <noprefixns:ScheduledDeliveryDateTime>2020-10-14T23:59:00Z</noprefixns:ScheduledDeliveryDateTime>
+                <noprefixns:EarlyShipmentAllowedIndicator/>
+                <noprefixns:ShipFromParty>
+                    <noprefixns:Location type="LogisticsSite">
+                        <noprefixns:ID>20320</noprefixns:ID>
+                    </noprefixns:Location>
+                </noprefixns:ShipFromParty>
+                <gic:ShipToParty>
+                    <noprefixns:Location type="LogisticsSite">
+                        <noprefixns:ID>20050</noprefixns:ID>
+                    </noprefixns:Location>
+                </gic:ShipToParty>
+                <noprefixns:EarliestShipDateTime>2020-09-18T00:00:00Z</noprefixns:EarliestShipDateTime>
+                <noprefixns:ShipmentServiceLevelCode name="DeliveryAsOneUnit"/>
+                <noprefixns:PartialShipmentAllowedIndicator/>
+                <noprefixns:PriorityCode>1</noprefixns:PriorityCode>
+                <gic:DeliveryType>FIO</gic:DeliveryType>
+                <noprefixns:UserArea>
+                    <noprefixns:StartDateTime/>
+                </noprefixns:UserArea>
+                <noprefixns:UserArea>
+                    <noprefixns:EndDateTime/>
+                </noprefixns:UserArea>
+                <noprefixns:UserArea>
+                    <noprefixns:ShipUnitTotalID>1</noprefixns:ShipUnitTotalID>
+                </noprefixns:UserArea>
+                <gic:UserArea name="OrderCount">2</gic:UserArea>
+                <gic:UserArea name="ServiceClient">RT</gic:UserArea>
+                <gic:UserArea name="FlowType">Intrazone</gic:UserArea>
+                <noprefixns:Status>
+                    <noprefixns:TimePeriod>
+                        <noprefixns:StartDateTime>2020-09-09T00:00:00Z</noprefixns:StartDateTime>
+                        <noprefixns:EndDateTime>2020-10-15T00:00:00Z</noprefixns:EndDateTime>
+                    </noprefixns:TimePeriod>
+                </noprefixns:Status>
+                <gic:PortOfDischarge/>
+            </gic:ShipmentHeader>
+            <gic:ShipmentItem>
+                <noprefixns:ItemID>
+                    <noprefixns:ID>123597_101</noprefixns:ID>
+                    <noprefixns:VariationID schemeName="CAICST"/>
+                </noprefixns:ItemID>
+                <noprefixns:Classification>
+                    <noprefixns:Codes>
+                        <noprefixns:Code name="Product Line">GC</noprefixns:Code>
+                    </noprefixns:Codes>
+                </noprefixns:Classification>
+                <noprefixns:Classification>
+                    <noprefixns:Codes>
+                        <noprefixns:Code name="Commodity">GC</noprefixns:Code>
+                    </noprefixns:Codes>
+                </noprefixns:Classification>
+                <noprefixns:CountryOfOriginCode>FR</noprefixns:CountryOfOriginCode>
+                <noprefixns:OrderQuantity unitCode="Each">3</noprefixns:OrderQuantity>
+                <gic:MarketCode>20</gic:MarketCode>
+                <noprefixns:SalesOrderReference>
+                    <noprefixns:DocumentID>
+                        <noprefixns:ID>GCA1763097200909-1</noprefixns:ID>
+                    </noprefixns:DocumentID>
+                    <noprefixns:DocumentDateTime>2020-09-09T00:00:00Z</noprefixns:DocumentDateTime>
+                </noprefixns:SalesOrderReference>
+                <gic:DocumentReference>
+                    <gic:DocumentID>
+                        <noprefixns:ID>14809521</noprefixns:ID>
+                    </gic:DocumentID>
+                </gic:DocumentReference>
+                <gic:LineType>N</gic:LineType>
+                <gic:DeliveryAddressCode>
+                    <noprefixns:ID>D05209053</noprefixns:ID>
+                </gic:DeliveryAddressCode>
+                <gic:InvoiceAddressCode>
+                    <noprefixns:ID>F00150130</noprefixns:ID>
+                </gic:InvoiceAddressCode>
+                <gic:ShipFromParty>
+                    <noprefixns:PartyIDs>
+                        <noprefixns:ID schemeName="InventoryOrg">UM1</noprefixns:ID>
+                    </noprefixns:PartyIDs>
+                    <noprefixns:Location>
+                        <noprefixns:UserArea>
+                            <noprefixns:Code name="CompanyCode">409</noprefixns:Code>
+                        </noprefixns:UserArea>
+                    </noprefixns:Location>
+                </gic:ShipFromParty>
+                <gic:ShipToParty>
+                    <noprefixns:PartyIDs>
+                        <noprefixns:ID schemeName="InventoryOrg">TUA</noprefixns:ID>
+                    </noprefixns:PartyIDs>
+                    <noprefixns:Account>
+                        <noprefixns:MichelinCompany>472</noprefixns:MichelinCompany>
+                    </noprefixns:Account>
+                </gic:ShipToParty>
+                <noprefixns:Note status="REXLOG">C..TURQ..RT-</noprefixns:Note>
+                <noprefixns:UserArea>
+                    <noprefixns:NameValue name="OD">FR</noprefixns:NameValue>
+                    <noprefixns:NameValue name="OR"/>
+                    <noprefixns:NameValue name="SubType">I_to_M_to_V</noprefixns:NameValue>
+                    <noprefixns:NameValue name="ProductType">FG</noprefixns:NameValue>
+                    <noprefixns:IncotermsCode/>
+                </noprefixns:UserArea>
+                <noprefixns:ScheduledShipDateTime>2020-09-18T00:00:00Z</noprefixns:ScheduledShipDateTime>
+            </gic:ShipmentItem>
+        </gic:Shipment>
+    </noprefixns:DataArea>
+</noprefixns:ProcessShipment>
