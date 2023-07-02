@@ -1,6 +1,6 @@
-package io.michelin.choreography.utils;
+package io.github.michelin.avroxmlmapper;
 
-public abstract class XMLUtilsConstants {
+public final class XMLUtilsConstants {
     // default property for xml conversion
     public final static String XPATH_DEFAULT = "xpath";
 

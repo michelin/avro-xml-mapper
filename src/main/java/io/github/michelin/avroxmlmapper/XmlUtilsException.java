@@ -1,4 +1,4 @@
-package io.michelin.choreography.utils;
+package io.github.michelin.avroxmlmapper;
 
 public class XmlUtilsException extends RuntimeException {
 

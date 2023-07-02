@@ -1,4 +1,4 @@
-package io.michelin.choreography.utils;
+package io.github.michelin.avroxmlmapper;
 
 import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
@@ -15,11 +15,11 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
-import static io.michelin.choreography.utils.GenericUtils.asList;
-import static io.michelin.choreography.utils.GenericUtils.extractRealType;
-import static io.michelin.choreography.utils.XMLUtilsConstants.*;
+import static io.github.michelin.avroxmlmapper.GenericUtils.asList;
+import static io.github.michelin.avroxmlmapper.GenericUtils.extractRealType;
+import static io.github.michelin.avroxmlmapper.XMLUtilsConstants.*;
 
-public abstract class AvroToXMLUtils {
+public final class AvroToXMLUtils {
 
     /**
      * Build all child nodes of an element (with type record in avsc) and return it as list.

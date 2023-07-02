@@ -1,4 +1,4 @@
-package io.michelin.choreography.utils;
+package io.github.michelin.avroxmlmapper;
 
 import org.apache.avro.JsonProperties;
 import org.apache.avro.LogicalTypes;
@@ -25,10 +25,10 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
-import static io.michelin.choreography.utils.GenericUtils.*;
-import static io.michelin.choreography.utils.XMLUtilsConstants.*;
+import static io.github.michelin.avroxmlmapper.GenericUtils.*;
+import static io.github.michelin.avroxmlmapper.XMLUtilsConstants.*;
 
-public abstract class XMLToAvroUtils {
+public final class XMLToAvroUtils {
 
     /**
      * Converts, recursively, the content of an XML-node into SpecificRecord (avro).

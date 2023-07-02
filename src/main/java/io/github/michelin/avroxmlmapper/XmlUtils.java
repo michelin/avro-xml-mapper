@@ -1,4 +1,4 @@
-package io.michelin.choreography.utils;
+package io.github.michelin.avroxmlmapper;
 
 import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -24,16 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.michelin.choreography.utils.AvroToXMLUtils.buildChildNodes;
-import static io.michelin.choreography.utils.AvroToXMLUtils.getPrefix;
-import static io.michelin.choreography.utils.XMLToAvroUtils.*;
-import static io.michelin.choreography.utils.XMLUtilsConstants.*;
-
 
 /**
  * Utility Class for XML parsing (Xpath)
  */
-public abstract class XmlUtils {
+public final class XmlUtils {
 
     /**
      * Evaluate a string value as a org.w3c.dom.Document and update namespaces according to the target.
@@ -56,9 +51,9 @@ public abstract class XmlUtils {
             }
 
             // build a reverse map of namespaces : URI (K) -> list of prefixes (V)
-            var mapOldNamespaces = extractNamespaces(document.getDocumentElement(), new HashMap<>());
-            purgeNamespaces(document.getDocumentElement());
-            simplifyNamespaces(document, xmlNamespacesMap, mapOldNamespaces);
+            var mapOldNamespaces = XMLToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
+            XMLToAvroUtils.purgeNamespaces(document.getDocumentElement());
+            XMLToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, mapOldNamespaces);
 
             return document;
 
@@ -157,7 +152,7 @@ public abstract class XmlUtils {
      * @return the document produced
      */
     public static Document createDocumentfromAvro(SpecificRecordBase record) {
-        return createDocumentfromAvro(record, XPATH_DEFAULT, Optional.of(XML_NAMESPACE_SELECTOR_DEFAULT));
+        return createDocumentfromAvro(record, XMLUtilsConstants.XPATH_DEFAULT, Optional.of(XMLUtilsConstants.XML_NAMESPACE_SELECTOR_DEFAULT));
     }
 
     /**
@@ -168,7 +163,7 @@ public abstract class XmlUtils {
      * @return the document produced
      */
     public static Document createDocumentfromAvro(SpecificRecordBase record, String xpathSelector) {
-        return createDocumentfromAvro(record, xpathSelector, Optional.of(XML_NAMESPACE_SELECTOR_DEFAULT));
+        return createDocumentfromAvro(record, xpathSelector, Optional.of(XMLUtilsConstants.XML_NAMESPACE_SELECTOR_DEFAULT));
     }
 
 
@@ -196,9 +191,9 @@ public abstract class XmlUtils {
                 mapNamespaces = Collections.emptyMap();
             }
             String rootElementName = record.getSchema().getProp(xpathSelector).substring(1);// the first character, for the xpath of rootElement,// is '/'
-            var rootElement = document.createElementNS(mapNamespaces.get(getPrefix(rootElementName)), rootElementName);
-            mapNamespaces.forEach((k, v) -> rootElement.setAttribute(k.isEmpty() ? XMLNS : XMLNS + ":" + k, v));
-            buildChildNodes(record, document, mapNamespaces, xpathSelector).forEach(n -> {
+            var rootElement = document.createElementNS(mapNamespaces.get(AvroToXMLUtils.getPrefix(rootElementName)), rootElementName);
+            mapNamespaces.forEach((k, v) -> rootElement.setAttribute(k.isEmpty() ? XMLUtilsConstants.XMLNS : XMLUtilsConstants.XMLNS + ":" + k, v));
+            AvroToXMLUtils.buildChildNodes(record, document, mapNamespaces, xpathSelector).forEach(n -> {
                 if (n.getNodeType() == Node.ATTRIBUTE_NODE) rootElement.setAttributeNode((Attr) n);
                 else rootElement.appendChild(n);
             });

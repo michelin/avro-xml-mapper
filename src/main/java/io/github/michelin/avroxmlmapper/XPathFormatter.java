@@ -1,4 +1,4 @@
-package io.michelin.choreography.utils;
+package io.github.michelin.avroxmlmapper;
 
 import java.util.regex.Pattern;
 

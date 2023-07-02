@@ -1,4 +1,4 @@
-package io.michelin.choreography.utils;
+package io.github.michelin.avroxmlmapper;
 
 import org.apache.avro.Schema;
 import org.w3c.dom.*;
@@ -11,10 +11,7 @@ import javax.xml.xpath.XPathFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.michelin.choreography.utils.XMLUtilsConstants.NO_PREFIX_NS;
-import static io.michelin.choreography.utils.XMLUtilsConstants.XMLNS;
-
-public abstract class GenericUtils {
+public final class GenericUtils {
 
 
     public static long stringParseCount = 0;
@@ -157,11 +154,11 @@ public abstract class GenericUtils {
         for (int i = 0; i < mapAttributes.getLength(); i++) {
             Attr attr = (Attr) mapAttributes.item(i);
             String attrName = attr.getNodeName();
-            if (attrName.startsWith(XMLNS + ":") || attrName.equals(XMLNS)) {
-                if (attrName.equals(XMLNS))
-                    mapPrefixes.put(NO_PREFIX_NS, attr.getValue());
+            if (attrName.startsWith(XMLUtilsConstants.XMLNS + ":") || attrName.equals(XMLUtilsConstants.XMLNS)) {
+                if (attrName.equals(XMLUtilsConstants.XMLNS))
+                    mapPrefixes.put(XMLUtilsConstants.NO_PREFIX_NS, attr.getValue());
                 else
-                    mapPrefixes.put(attr.getNodeName().replace(XMLNS + ":", ""), attr.getValue());
+                    mapPrefixes.put(attr.getNodeName().replace(XMLUtilsConstants.XMLNS + ":", ""), attr.getValue());
             }
         }
 

@@ -5,10 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.michelin</groupId>
-    <artifactId>AvroXMLMapper</artifactId>
-    <name>AvroXMLMapper</name>
-    <version>2.OOM-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <artifactId>avro-xml-mapper</artifactId>
+    <name>avro-xml-mapper</name>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    
+    <properties>
+        <java.version>17</java.version>
+    </properties>
 
     <build>
         <plugins>
