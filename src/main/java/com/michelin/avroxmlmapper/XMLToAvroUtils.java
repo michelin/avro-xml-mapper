@@ -1,4 +1,4 @@
-package io.github.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper;
 
 import org.apache.avro.JsonProperties;
 import org.apache.avro.LogicalTypes;
@@ -25,8 +25,8 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
-import static io.github.michelin.avroxmlmapper.GenericUtils.*;
-import static io.github.michelin.avroxmlmapper.XMLUtilsConstants.*;
+import static com.michelin.avroxmlmapper.GenericUtils.*;
+import static com.michelin.avroxmlmapper.XMLUtilsConstants.*;
 
 public final class XMLToAvroUtils {
 

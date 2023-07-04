@@ -1,4 +1,4 @@
-package io.github.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper;
 
 public class XmlUtilsException extends RuntimeException {
 

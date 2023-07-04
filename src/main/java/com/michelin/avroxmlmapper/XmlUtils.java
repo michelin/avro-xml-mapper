@@ -1,4 +1,4 @@
-package io.github.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper;
 
 import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecordBase;

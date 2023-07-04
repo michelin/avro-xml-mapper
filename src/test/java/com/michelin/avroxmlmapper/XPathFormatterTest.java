@@ -1,4 +1,4 @@
-package io.github.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

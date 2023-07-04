@@ -1,4 +1,4 @@
-package io.github.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper;
 
 import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
@@ -15,9 +15,9 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
-import static io.github.michelin.avroxmlmapper.GenericUtils.asList;
-import static io.github.michelin.avroxmlmapper.GenericUtils.extractRealType;
-import static io.github.michelin.avroxmlmapper.XMLUtilsConstants.*;
+import static com.michelin.avroxmlmapper.GenericUtils.asList;
+import static com.michelin.avroxmlmapper.GenericUtils.extractRealType;
+import static com.michelin.avroxmlmapper.XMLUtilsConstants.*;
 
 public final class AvroToXMLUtils {
 
