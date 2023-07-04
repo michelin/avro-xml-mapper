@@ -186,7 +186,7 @@ public final class GenericUtils {
      * Convert a NodeList to an IterableList of Node
      *
      * @param n the list to convert
-     * @return an equivalent List<Node>
+     * @return an equivalent List of Node
      */
     public static List<Node> asList(NodeList n) {
         return n.getLength() == 0 ?
@@ -234,7 +234,7 @@ public final class GenericUtils {
 
 
     /**
-     * Frequently the type is defined in avsc with this pattern : "type" : [ "null", <real type>] to allow a null value.
+     * Frequently the type is defined in avsc with this pattern : "type" : [ "null", "realType"] to allow a null value.
      * This pattern creates a UNION type, with two sub-types. This method extracts the non-null type ("real type").
      *
      * @param schema the schema node wich can be a UNION
