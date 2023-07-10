@@ -1,13 +1,26 @@
-package com.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper.utility;
 
+import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
+import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
+import com.michelin.avroxmlmapper.mapper.XMLToAvroUtils;
 import org.apache.avro.Schema;
 import org.w3c.dom.*;
+import org.xml.sax.InputSource;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,27 +39,74 @@ public final class GenericUtils {
     }
 
     /**
-     * Handle exception Document xPath evaluation
+     * Get the XML namespaces from a given XML schema
      *
-     * @param document        the source xml Document
-     * @param xPathExpression the xPathExpression to match
-     * @return the list of matyched nodes
+     * @param schema            The current XML schema
+     * @param namespaceSelector selector for multiple namespaces mapped in avro
+     * @return A map containing the namespaces
      */
-    public static NodeList xPathNodeListEvaluation(Document document, String xPathExpression) {
-        NodeList result = null;
-        try {
-            XPath xPath = getXpath();
-            xPath.setNamespaceContext(getNamespaceContext(document));
-            result = (NodeList) getXpath().compile(xPathExpression).evaluate(document, XPathConstants.NODESET);
-        } catch (XPathExpressionException e) {
-            throw new XmlUtilsException("Failed to execute xpath " + xPathExpression, e);
-        }
-
-        return result;
+    @SuppressWarnings("unchecked")
+    public static Map<String, String> xmlNamespaces(Schema schema, String namespaceSelector) {
+        return (Map<String, String>) schema.getObjectProp(namespaceSelector);
     }
 
-    public static NodeList xPathNodeListEvaluation(Node node, String xPathExpression, NamespaceContext namespaceContext) {
-        return xPathNodeListEvaluation(node, node, xPathExpression, namespaceContext);
+    /**
+     * Get the XML namespaces from a given XML schema
+     *
+     * @param schema The current XML schema
+     * @return A map containing the namespaces
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, String> xmlNamespaces(Schema schema) {
+        return (Map<String, String>) schema.getObjectProp("xmlNamespaces");
+    }
+
+    /**
+     * Converts a document to a String.
+     *
+     * @param document the document to convert
+     * @return the result string
+     * @throws TransformerException
+     */
+    public static String documentToString(Document document) throws TransformerException {
+        StringWriter writer = new StringWriter();
+        var transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        transformer.transform(new DOMSource(document), new StreamResult(writer));
+        return writer.toString();
+    }
+
+    /**
+     * Evaluate a string value as a org.w3c.dom.Document and update namespaces according to the target.
+     *
+     * @param strValue         the string value to evaluate as a Document
+     * @param xmlNamespacesMap the target of namespaces (key : prefix ; value : URI), if null no update on namespaces.
+     * @return the evaluated xml Document
+     */
+    public static Document stringToDocument(String strValue, Map<String, String> xmlNamespacesMap) {
+        Document document;
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(strValue));
+            document = builder.parse(is);
+
+            if (xmlNamespacesMap == null) {
+                return document;
+            }
+
+            // build a reverse map of namespaces : URI (K) -> list of prefixes (V)
+            var mapOldNamespaces = XMLToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
+            XMLToAvroUtils.purgeNamespaces(document.getDocumentElement());
+            XMLToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, mapOldNamespaces);
+
+            return document;
+
+        } catch (Exception e) {
+            throw new AvroXmlMapperException("Failed to parse XML", e);
+        }
     }
 
     /**
@@ -73,7 +133,7 @@ public final class GenericUtils {
             xPath.setNamespaceContext(namespaceContext);
             result = (NodeList) xPath.compile(xPathExpression).evaluate(nodeToParse, XPathConstants.NODESET);
         } catch (XPathExpressionException e) {
-            throw new XmlUtilsException("Failed to execute xpath " + xPathExpression, e);
+            throw new AvroXmlMapperException("Failed to execute xpath " + xPathExpression, e);
         }
 
         return result;
@@ -91,17 +151,6 @@ public final class GenericUtils {
     public static List<String> xPathStringListEvaluation(Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
         var nodeList = xPathNodeListEvaluation(node, orphanNode, xPathExpression, namespaceContext);
         return asList(nodeList).stream().map(Node::getTextContent).filter(s -> !s.isEmpty()).collect(Collectors.toList());
-    }
-
-    /**
-     * Handle exception for Document xPath evaluation
-     *
-     * @param document        the source xml Document
-     * @param xPathExpression the xPathExpression to match
-     * @return the list of matyched nodes
-     */
-    public static String xPathStringEvaluation(Document document, String xPathExpression) {
-        return xPathStringEvaluation(document, xPathExpression, getNamespaceContext(document));
     }
 
     /**
@@ -128,18 +177,12 @@ public final class GenericUtils {
             xPath.setNamespaceContext(namespaceContext);
             result = (String) xPath.compile(xPathExpression).evaluate(nodeToParse, XPathConstants.STRING);
         } catch (XPathExpressionException e) {
-            throw new XmlUtilsException("Failed to execute xpath " + xPathExpression, e);
+            throw new AvroXmlMapperException("Failed to execute xpath " + xPathExpression, e);
         }
         stringParseCount++;
 
         return result != null && !result.isBlank() ? result : null;
     }
-
-
-    public static String xPathStringEvaluation(Node node, String xPathExpression, NamespaceContext namespaceContext) {
-        return xPathStringEvaluation(node, node, xPathExpression, namespaceContext);
-    }
-
 
     /**
      * Build a simple NamespaceContext in order to make Xpath usable for a document
@@ -201,31 +244,18 @@ public final class GenericUtils {
      * @param value     the string value
      * @return the result of parsing. In case of Exception (for ex NumberFormatException) the result is null.
      */
-    protected static Object parseValue(Schema.Type fieldType, String value) {
+    public static Object parseValue(Schema.Type fieldType, String value) {
         Object result;
         try {
-            switch (fieldType) {
-                case STRING:
-                    result = value;
-                    break;
-                case INT:
-                    result = Integer.valueOf(value);
-                    break;
-                case LONG:
-                    result = Long.valueOf(value);
-                    break;
-                case FLOAT:
-                    result = Float.valueOf(value);
-                    break;
-                case DOUBLE:
-                    result = Double.valueOf(value);
-                    break;
-                case BOOLEAN:
-                    result = Boolean.valueOf(value);
-                    break;
-                default:
-                    result = null;
-            }
+            result = switch (fieldType) {
+                case STRING -> value;
+                case INT -> Integer.valueOf(value);
+                case LONG -> Long.valueOf(value);
+                case FLOAT -> Float.valueOf(value);
+                case DOUBLE -> Double.valueOf(value);
+                case BOOLEAN -> Boolean.valueOf(value);
+                default -> null;
+            };
         } catch (Exception e) {
             result = null;
         }

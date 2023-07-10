@@ -1,4 +1,4 @@
-package com.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper.constants;
 
 public final class XMLUtilsConstants {
     // default property for xml conversion
@@ -8,9 +8,6 @@ public final class XMLUtilsConstants {
     public final static String XPATHKEY_DEFAULT = "xpathKey";
     public final static String XPATHMAP_DEFAULT = "xpathMap";
     public final static String XPATHVALUE_DEFAULT = "xpathValue";
-
-    // separator for the current map definition 
-    public final static String XPATHMAP_KEYVALUE_SEPARATOR = "#";
 
 
 

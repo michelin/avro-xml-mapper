@@ -1,5 +1,7 @@
-package com.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper.mapper;
 
+import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
+import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
 import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -7,6 +9,8 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -15,11 +19,50 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
-import static com.michelin.avroxmlmapper.GenericUtils.asList;
-import static com.michelin.avroxmlmapper.GenericUtils.extractRealType;
-import static com.michelin.avroxmlmapper.XMLUtilsConstants.*;
+import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
+import static com.michelin.avroxmlmapper.constants.XMLUtilsConstants.*;
 
 public final class AvroToXMLUtils {
+
+    /**
+     * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
+     *
+     * @param record            the global SpecificRecordBase containing the entire data to parse in XML
+     * @param xpathSelector     Name of the variable defining the xpath of the avsc file that needs to be used
+     * @param namespaceSelector Name of the variable defining xml namespaces of avsc file corresponding to record
+     * @return the document produced
+     */
+    public static Document createDocumentfromAvro(SpecificRecordBase record, String xpathSelector, Optional<String> namespaceSelector) {
+        Document document;
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.newDocument();
+            Map<String, String> mapNamespaces;
+            if (namespaceSelector.isPresent()) {
+                mapNamespaces = xmlNamespaces(record.getSchema(), namespaceSelector.get());
+                mapNamespaces.put("", mapNamespaces.get("null"));
+                mapNamespaces.remove("null");
+            } else {
+                mapNamespaces = Collections.emptyMap();
+            }
+            String rootElementName = record.getSchema().getProp(xpathSelector).substring(1);// the first character, for the xpath of rootElement,// is '/'
+            var rootElement = document.createElementNS(mapNamespaces.get(AvroToXMLUtils.getPrefix(rootElementName)), rootElementName);
+            mapNamespaces.forEach((k, v) -> rootElement.setAttribute(k.isEmpty() ? XMLUtilsConstants.XMLNS : XMLUtilsConstants.XMLNS + ":" + k, v));
+            AvroToXMLUtils.buildChildNodes(record, document, mapNamespaces, xpathSelector).forEach(n -> {
+                if (n.getNodeType() == Node.ATTRIBUTE_NODE) rootElement.setAttributeNode((Attr) n);
+                else rootElement.appendChild(n);
+            });
+
+            document.appendChild(rootElement);
+
+        } catch (Exception e) {
+            throw new AvroXmlMapperException("Failed to create document from avro", e);
+        }
+
+        return document;
+    }
 
     /**
      * Build all child nodes of an element (with type record in avsc) and return it as list.
@@ -30,7 +73,7 @@ public final class AvroToXMLUtils {
      * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
      * @return the list of all child nodes built
      */
-    protected static List<Node> buildChildNodes(SpecificRecordBase record, Document document, Map<String, String> namespaces, String xpathSelector) {
+    private static List<Node> buildChildNodes(SpecificRecordBase record, Document document, Map<String, String> namespaces, String xpathSelector) {
         List<Node> childNodes = new ArrayList<>();
         for (Schema.Field field : record.getSchema().getFields()) {
             Schema fieldType = extractRealType(field.schema());
@@ -199,7 +242,7 @@ public final class AvroToXMLUtils {
      * @param namespaces map containing all namespaces (K : prefix ; V : URI)
      * @return the node created
      */
-    public static Node createNode(String xpath, List<Node> nodeList, Document
+    private static Node createNode(String xpath, List<Node> nodeList, Document
             document, Map<String, String> namespaces) {
         Node resultNode = null;
         Node parentNode = null;
@@ -253,7 +296,7 @@ public final class AvroToXMLUtils {
         return resultNode;
     }
 
-    public static List<String> getXpathList(Schema.Field field, String xpathSelector) {
+    private static List<String> getXpathList(Schema.Field field, String xpathSelector) {
         Object xpath1 = field.getObjectProp(xpathSelector);
         var xpathList = new ArrayList<String>();
 
@@ -388,7 +431,7 @@ public final class AvroToXMLUtils {
      * @param xmlLevel the xpath level
      * @return true if matching, false otherwise
      */
-    protected static boolean isNodeMatching(Node node, String xmlLevel) {
+    private static boolean isNodeMatching(Node node, String xmlLevel) {
         if (node.getNodeName().equals(extractElementName(xmlLevel))) { // same element name
             var xmlSubLevel = getSubLevelFromFilter(xmlLevel);
             if (!xmlSubLevel.isEmpty()) {
@@ -432,7 +475,7 @@ public final class AvroToXMLUtils {
         return resultNode;
     }
 
-    protected static String getSubLevelFromFilter(String xmlLevel) {
+    private static String getSubLevelFromFilter(String xmlLevel) {
         var subLevel = new StringBuilder();
         if (xmlLevel.contains("[")) {
             String filter = xmlLevel.substring(xmlLevel.indexOf('[') + 1, xmlLevel.indexOf(']'));

@@ -1,4 +1,6 @@
-package com.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper.utility;
+
+import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
 
 import java.util.regex.Pattern;
 
@@ -46,14 +48,13 @@ public class XPathFormatter {
         });
 
         // regex means the first character is a '@' followed by any word (i.e. an attribute)
-        String xpathReplaced = Pattern.compile("@(\\w*)")
+
+        return Pattern.compile("@(\\w*)")
                 .matcher(xpathPrefixed2)
                 .replaceAll(m -> {
                     String match = m.group();
                     return "@*[translate(local-name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '" + match.toLowerCase().substring(1) + "']";
                 });
-
-        return xpathReplaced;
 
     }
 }

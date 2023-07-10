@@ -1,5 +1,7 @@
-package com.michelin.avroxmlmapper;
+package com.michelin.avroxmlmapper.mapper;
 
+import com.michelin.avroxmlmapper.utility.XPathFormatter;
+import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
 import org.apache.avro.JsonProperties;
 import org.apache.avro.LogicalTypes;
 import org.apache.avro.Schema;
@@ -25,8 +27,8 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
-import static com.michelin.avroxmlmapper.GenericUtils.*;
-import static com.michelin.avroxmlmapper.XMLUtilsConstants.*;
+import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
+import static com.michelin.avroxmlmapper.constants.XMLUtilsConstants.*;
 
 public final class XMLToAvroUtils {
 
@@ -40,7 +42,7 @@ public final class XMLToAvroUtils {
      * @param baseNamespace    base namespace for the generated SpecificRecord classes
      * @return SpecificRecord generated
      */
-    public static SpecificRecordBase convert(Node fullNode, Node orphanNode, Class<? extends SpecificRecordBase> clazz, NamespaceContext namespaceContext, String baseNamespace, String xpathSelector) {
+    static SpecificRecordBase convert(Node fullNode, Node orphanNode, Class<? extends SpecificRecordBase> clazz, NamespaceContext namespaceContext, String baseNamespace, String xpathSelector) {
         try {
             SpecificRecordBase record = clazz.getDeclaredConstructor().newInstance();
             for (Schema.Field field : record.getSchema().getFields()) {
@@ -76,11 +78,11 @@ public final class XMLToAvroUtils {
             }
             return record;
         } catch (Exception e) {
-            throw new XmlUtilsException("Failed to parse document", e);
+            throw new AvroXmlMapperException("Failed to parse document", e);
         }
     }
 
-    protected static void convertXMLMapToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, Schema.Field field, Schema fieldType, String xpathSelector) {
+    private static void convertXMLMapToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, Schema.Field field, Schema fieldType, String xpathSelector) {
 
         // initialize value Schema
         Schema valueSchema = fieldType.getValueType();
