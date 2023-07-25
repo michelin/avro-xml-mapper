@@ -30,6 +30,9 @@ import java.util.*;
 import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.*;
 import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
 
+/**
+ * Utility class for converting XML to Avro.
+ */
 public final class XmlToAvroUtils {
 
     /**
@@ -335,10 +338,20 @@ public final class XmlToAvroUtils {
         return (Class<SpecificRecordBase>) Class.forName(baseNamespace + "." + typeName);
     }
 
+    /**
+     * <p>Redefines all xml namespaces used in the xml document at the root markup.</p>
+     * <p></p>
+     *
+     *
+     * @param document
+     * @param xmlNamespacesMap
+     * @param mapOldNamespaces
+     */
     public static void simplifyNamespaces(Document document, Map<String, String> xmlNamespacesMap, Map<String, List<String>> mapOldNamespaces) {
         // all namespaces are redefined on root element, matching old namespaces and target namespaces on URI
         for (Map.Entry<String, String> entry : xmlNamespacesMap.entrySet()) {
-            if (entry.getKey().equalsIgnoreCase("null")) {
+            // if the namespace is the main namespace without prefix (xmlns=...), we use the "null" key
+            if ("null".equalsIgnoreCase(entry.getKey())) {
                 document.getDocumentElement().setAttribute(XMLNS + ":" + NO_PREFIX_NS, entry.getValue());
                 for (String prefixToReplace : mapOldNamespaces.get(entry.getValue())) {
                     if (prefixToReplace.equals(NO_PREFIX_NS)) {
@@ -377,6 +390,12 @@ public final class XmlToAvroUtils {
         asList(node.getChildNodes()).forEach(n -> replacePrefixNodeRecursively(n, oldPrefix, newPrefix));
     }
 
+    /**
+     * <p>Recursively removes all namespace definitions from the given node and its children.</p>
+     * <p>Namespaces definition are found by searching for attributes starting with the "xmlns" char sequence.</p>
+     *
+     * @param node  The node to purge
+     */
     public static void purgeNamespaces(Node node) {
 
         asList(node.getChildNodes()).forEach(XmlToAvroUtils::purgeNamespaces);

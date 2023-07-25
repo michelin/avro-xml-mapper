@@ -1,8 +1,8 @@
 {
   "namespace": "com.michelin.avro",
   "xmlNamespaces": {
-    "null":"namespace1",
-    "ns2":"namespace2"
+    "null":"http://namespace.uri/default",
+    "ns2":"http://namespace.uri/2"
   },
   "xpath" : "/root",
   "type": "record",

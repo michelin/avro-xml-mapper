@@ -4,6 +4,9 @@ import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
 
 import java.util.regex.Pattern;
 
+/**
+ * Utility class to format xpath expressions.
+ */
 public class XPathFormatter {
 
     /**

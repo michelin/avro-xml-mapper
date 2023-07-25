@@ -24,6 +24,9 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Generic utility class for conversions.
+ */
 public final class GenericUtils {
 
 
@@ -98,9 +101,16 @@ public final class GenericUtils {
             }
 
             // build a reverse map of namespaces : URI (K) -> list of prefixes (V)
-            var mapOldNamespaces = XmlToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
+            var namespacePrefixesByURI = XmlToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
+
+            // Remove all namespace definitions
             XmlToAvroUtils.purgeNamespaces(document.getDocumentElement());
-            XmlToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, mapOldNamespaces);
+
+            // Unify all namespaces by keeping only the ones defined in the xmlNamespacesMap.
+            // For instance, if the namespacePrefixesByURI map contains {"http://www.openapplications.org/oagis/9", ["ns2", "ns9"]}
+            // And the xmlNamespacesMap contains {"ns2", "http://www.openapplications.org/oagis/9"}
+            // Then the only namespace left will be "ns2" and the prefix "ns9" will be removed.
+            XmlToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, namespacePrefixesByURI);
 
             return document;
 

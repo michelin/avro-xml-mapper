@@ -41,33 +41,15 @@
     },
     {
       "name": "stringMapScenario1",
-      "customXpath1": {
-        "rootXpath": "stringMapScenario1",
-        "keyXpath": "key",
-        "valueXpath": "value"
-      },
-      "customXpath2": {
-        "rootXpath": "stringMapScenario1",
-        "keyXpath": "key",
-        "valueXpath": "value"
-      },
-      "type": {
-        "type": "map",
-        "values": "string"
-      },
+      "customXpath1": {"rootXpath": "stringMapScenario1", "keyXpath": "key", "valueXpath": "value"},
+      "customXpath2": {"rootXpath": "stringMapScenario1", "keyXpath": "key", "valueXpath": "value"},
+      "type": {"type": "map", "values": "string"},
       "default": {}
     },
     {
       "name": "stringMapScenario2",
-      "customXpath1": {
-        "rootXpath": "stringMapScenario2/entry",
-        "keyXpath": "@key",
-        "valueXpath": "."
-      },
-      "type": {
-        "type": "map",
-        "values": "string"
-      },
+      "customXpath1": {"rootXpath": "stringMapScenario2/entry", "keyXpath": "@key", "valueXpath": "."},
+      "type": {"type": "map", "values": "string"},
       "default": {}
     },
     {
@@ -90,19 +72,13 @@
       "name": "stringList",
       "customXpath1": "stringList/listItem",
       "customXpath2": "stringList/listItem",
-      "type": [ "null" , {
-        "type": "array",
-        "items": "string"
-      }],
+      "type": [ "null" , {"type": "array", "items": "string"}],
       "default": null
     },
     {
       "name": "stringListWithDefault",
       "customXpath1": "stringListWithDefault",
-      "type": {
-        "type": "array",
-        "items": "string"
-      },
+      "type": {"type": "array", "items": "string" },
       "default": []
     },
     {
