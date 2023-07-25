@@ -1,0 +1,128 @@
+{
+  "namespace": "com.michelin.avro",
+  "xmlNamespaces": {
+    "null":"namespace1",
+    "ns2":"namespace2"
+  },
+  "xmlNamespacesCustom2": {
+    "null":"namespace1",
+    "ns2":"namespace2"
+  },
+  "customXpath1" : "/root",
+  "customXpath2" : "/root",
+  "type": "record",
+  "name": "TestModelXMLMultipleXpath",
+  "fields": [
+    {"name": "stringField", "type" : ["null","string"], "default": null, "customXpath1": "ns2:stringField","customXpath2": "ns2:stringField"},
+    {"name": "stringFieldWithDefault", "type" : ["string","null"], "default": "defaultString", "customXpath1": "stringFieldWithDefault", "customXpath2": "stringFieldWithDefault"},
+    {"name": "booleanField","type" : "boolean", "default": false, "customXpath1": "booleanField"},
+    {"name": "quantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null, "customXpath1": "quantityField", "customXpath2": "quantityField"},
+    {"name": "quantityFieldWithDefault", "type" : [{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4},"null"], "default": "\u0007\u00D0\u0000", "customXpath1": "quantityFieldWithDefault", "customXpath2": "quantityFieldWithDefault"},
+    {"name": "dateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null, "customXpath1": "dateField", "customXpath2": "quantityFieldWithDefault"},
+    {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "customXpath1": "dateFieldWithDefault", "customXpath2": "dateFieldWithDefault"},
+    {
+      "name": "stringMapLegacyScenario",
+      "xpathMap": "stringMapLegacyScenario",
+      "xpathKey": "key",
+      "xpathValue": "value",
+      "type": [ "null" , {
+        "type": "map",
+        "values": "string"
+      }],
+      "default": null
+    },
+    {
+      "name": "stringMapLegacyScenarioWithDefault",
+      "type": { 
+        "type": "map",
+        "values": "string"
+      },
+      "default": {}
+    },
+    {
+      "name": "stringMapScenario1",
+      "customXpath1": {
+        "rootXpath": "stringMapScenario1",
+        "keyXpath": "key",
+        "valueXpath": "value"
+      },
+      "customXpath2": {
+        "rootXpath": "stringMapScenario1",
+        "keyXpath": "key",
+        "valueXpath": "value"
+      },
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {}
+    },
+    {
+      "name": "stringMapScenario2",
+      "customXpath1": {
+        "rootXpath": "stringMapScenario2/entry",
+        "keyXpath": "@key",
+        "valueXpath": "."
+      },
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {}
+    },
+    {
+      "name": "recordMapWithDefault",
+      "type": {
+        "type": "map",
+        "customXpath1": "recordMapWithDefault",
+        "values": {
+          "type": "record",
+          "name": "MapElement",
+          "fields": [
+            {"name": "mapDateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null},
+            {"name": "mapQuantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null}
+          ]
+        }
+      },
+      "default": {}
+    },
+    {
+      "name": "stringList",
+      "customXpath1": "stringList/listItem",
+      "customXpath2": "stringList/listItem",
+      "type": [ "null" , {
+        "type": "array",
+        "items": "string"
+      }],
+      "default": null
+    },
+    {
+      "name": "stringListWithDefault",
+      "customXpath1": "stringListWithDefault",
+      "type": {
+        "type": "array",
+        "items": "string"
+      },
+      "default": []
+    },
+    {
+      "name": "recordListWithDefault",
+      "customXpath1": "recordList/listItem",
+      "customXpath2": "recordList/listItem",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "SubXMLTestModelMultipleXpath",
+          "fields": [
+            {"name": "subStringField", "type" : ["null","string"], "default": null, "customXpath1": "subStringField", "customXpath2": "subStringField"},
+            {"name": "subIntField", "type" : ["null","int"], "default": null, "customXpath1": "subIntField"},
+            {"name": "subStringFieldFromAttribute", "type" : ["null","string"], "default": null, "customXpath1": "subIntField/@attribute", "customXpath2": "subIntField/@attribute"}
+          ],
+          "default": {}
+        }
+      },
+      "default": []
+    }
+  ]
+}

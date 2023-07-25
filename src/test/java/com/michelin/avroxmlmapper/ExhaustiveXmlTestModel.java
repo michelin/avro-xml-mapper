@@ -11,9 +11,9 @@ import org.apache.avro.message.SchemaStore;
 import org.apache.avro.specific.SpecificData;
 
 @org.apache.avro.specific.AvroGenerated
-public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+public class ExhaustiveXmlTestModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
     private static final long serialVersionUID = 5108064317782662199L;
-    public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ExhaustiveXMLTestModel\",\"namespace\":\"io.michelin.choreography.avro\",\"fields\":[{\"name\":\"date1\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date1\"},{\"name\":\"date2\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date2\"},{\"name\":\"date3\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date3\"},{\"name\":\"date4\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date4\"},{\"name\":\"date5\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date5\"}],\"xmlNamespaces\":{\"null\":\"toto\",\"ns1\":\"toto2\"},\"xpath\":\"/TestPayload\"}");
+    public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ExhaustiveXMLTestModel\",\"namespace\":\"com.michelin.avroxmlmapper\",\"fields\":[{\"name\":\"date1\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date1\"},{\"name\":\"date2\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date2\"},{\"name\":\"date3\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date3\"},{\"name\":\"date4\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date4\"},{\"name\":\"date5\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"xpath\":\"ns1:Date5\"}],\"xmlNamespaces\":{\"null\":\"toto\",\"ns1\":\"toto2\"},\"xpath\":\"/TestPayload\"}");
     public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
     private static SpecificData MODEL$ = new SpecificData();
@@ -21,17 +21,17 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
         MODEL$.addLogicalTypeConversion(new org.apache.avro.data.TimeConversions.TimestampMillisConversion());
     }
 
-    private static final BinaryMessageEncoder<ExhaustiveXMLTestModel> ENCODER =
-            new BinaryMessageEncoder<ExhaustiveXMLTestModel>(MODEL$, SCHEMA$);
+    private static final BinaryMessageEncoder<ExhaustiveXmlTestModel> ENCODER =
+            new BinaryMessageEncoder<ExhaustiveXmlTestModel>(MODEL$, SCHEMA$);
 
-    private static final BinaryMessageDecoder<ExhaustiveXMLTestModel> DECODER =
-            new BinaryMessageDecoder<ExhaustiveXMLTestModel>(MODEL$, SCHEMA$);
+    private static final BinaryMessageDecoder<ExhaustiveXmlTestModel> DECODER =
+            new BinaryMessageDecoder<ExhaustiveXmlTestModel>(MODEL$, SCHEMA$);
 
     /**
      * Return the BinaryMessageEncoder instance used by this class.
      * @return the message encoder used by this class
      */
-    public static BinaryMessageEncoder<ExhaustiveXMLTestModel> getEncoder() {
+    public static BinaryMessageEncoder<ExhaustiveXmlTestModel> getEncoder() {
         return ENCODER;
     }
 
@@ -39,7 +39,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * Return the BinaryMessageDecoder instance used by this class.
      * @return the message decoder used by this class
      */
-    public static BinaryMessageDecoder<ExhaustiveXMLTestModel> getDecoder() {
+    public static BinaryMessageDecoder<ExhaustiveXmlTestModel> getDecoder() {
         return DECODER;
     }
 
@@ -48,8 +48,8 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
      * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
      */
-    public static BinaryMessageDecoder<ExhaustiveXMLTestModel> createDecoder(SchemaStore resolver) {
-        return new BinaryMessageDecoder<ExhaustiveXMLTestModel>(MODEL$, SCHEMA$, resolver);
+    public static BinaryMessageDecoder<ExhaustiveXmlTestModel> createDecoder(SchemaStore resolver) {
+        return new BinaryMessageDecoder<ExhaustiveXmlTestModel>(MODEL$, SCHEMA$, resolver);
     }
 
     /**
@@ -67,7 +67,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * @return a ExhaustiveXMLTestModel instance decoded from the given buffer
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
      */
-    public static ExhaustiveXMLTestModel fromByteBuffer(
+    public static ExhaustiveXmlTestModel fromByteBuffer(
             java.nio.ByteBuffer b) throws java.io.IOException {
         return DECODER.decode(b);
     }
@@ -83,7 +83,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * to their default values from the schema.  If that is desired then
      * one should use <code>newBuilder()</code>.
      */
-    public ExhaustiveXMLTestModel() {}
+    public ExhaustiveXmlTestModel() {}
 
     /**
      * All-args constructor.
@@ -93,7 +93,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * @param date4 The new value for date4
      * @param date5 The new value for date5
      */
-    public ExhaustiveXMLTestModel(java.time.Instant date1, java.time.Instant date2, java.time.Instant date3, java.time.Instant date4, java.time.Instant date5) {
+    public ExhaustiveXmlTestModel(java.time.Instant date1, java.time.Instant date2, java.time.Instant date3, java.time.Instant date4, java.time.Instant date5) {
         this.date1 = date1;
         this.date2 = date2;
         this.date3 = date3;
@@ -217,8 +217,8 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * Creates a new ExhaustiveXMLTestModel RecordBuilder.
      * @return A new ExhaustiveXMLTestModel RecordBuilder
      */
-    public static ExhaustiveXMLTestModel.Builder newBuilder() {
-        return new ExhaustiveXMLTestModel.Builder();
+    public static ExhaustiveXmlTestModel.Builder newBuilder() {
+        return new ExhaustiveXmlTestModel.Builder();
     }
 
     /**
@@ -226,11 +226,11 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * @param other The existing builder to copy.
      * @return A new ExhaustiveXMLTestModel RecordBuilder
      */
-    public static ExhaustiveXMLTestModel.Builder newBuilder(ExhaustiveXMLTestModel.Builder other) {
+    public static ExhaustiveXmlTestModel.Builder newBuilder(ExhaustiveXmlTestModel.Builder other) {
         if (other == null) {
-            return new ExhaustiveXMLTestModel.Builder();
+            return new ExhaustiveXmlTestModel.Builder();
         } else {
-            return new ExhaustiveXMLTestModel.Builder(other);
+            return new ExhaustiveXmlTestModel.Builder(other);
         }
     }
 
@@ -239,11 +239,11 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * @param other The existing instance to copy.
      * @return A new ExhaustiveXMLTestModel RecordBuilder
      */
-    public static ExhaustiveXMLTestModel.Builder newBuilder(ExhaustiveXMLTestModel other) {
+    public static ExhaustiveXmlTestModel.Builder newBuilder(ExhaustiveXmlTestModel other) {
         if (other == null) {
-            return new ExhaustiveXMLTestModel.Builder();
+            return new ExhaustiveXmlTestModel.Builder();
         } else {
-            return new ExhaustiveXMLTestModel.Builder(other);
+            return new ExhaustiveXmlTestModel.Builder(other);
         }
     }
 
@@ -251,8 +251,8 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
      * RecordBuilder for ExhaustiveXMLTestModel instances.
      */
     @org.apache.avro.specific.AvroGenerated
-    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ExhaustiveXMLTestModel>
-            implements org.apache.avro.data.RecordBuilder<ExhaustiveXMLTestModel> {
+    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ExhaustiveXmlTestModel>
+            implements org.apache.avro.data.RecordBuilder<ExhaustiveXmlTestModel> {
 
         private java.time.Instant date1;
         private java.time.Instant date2;
@@ -269,7 +269,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * Creates a Builder by copying an existing Builder.
          * @param other The existing Builder to copy.
          */
-        private Builder(ExhaustiveXMLTestModel.Builder other) {
+        private Builder(ExhaustiveXmlTestModel.Builder other) {
             super(other);
             if (isValidValue(fields()[0], other.date1)) {
                 this.date1 = data().deepCopy(fields()[0].schema(), other.date1);
@@ -297,7 +297,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * Creates a Builder by copying an existing ExhaustiveXMLTestModel instance
          * @param other The existing instance to copy.
          */
-        private Builder(ExhaustiveXMLTestModel other) {
+        private Builder(ExhaustiveXmlTestModel other) {
             super(SCHEMA$);
             if (isValidValue(fields()[0], other.date1)) {
                 this.date1 = data().deepCopy(fields()[0].schema(), other.date1);
@@ -335,7 +335,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * @param value The value of 'date1'.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder setDate1(java.time.Instant value) {
+        public ExhaustiveXmlTestModel.Builder setDate1(java.time.Instant value) {
             validate(fields()[0], value);
             this.date1 = value;
             fieldSetFlags()[0] = true;
@@ -355,7 +355,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * Clears the value of the 'date1' field.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder clearDate1() {
+        public ExhaustiveXmlTestModel.Builder clearDate1() {
             date1 = null;
             fieldSetFlags()[0] = false;
             return this;
@@ -375,7 +375,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * @param value The value of 'date2'.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder setDate2(java.time.Instant value) {
+        public ExhaustiveXmlTestModel.Builder setDate2(java.time.Instant value) {
             validate(fields()[1], value);
             this.date2 = value;
             fieldSetFlags()[1] = true;
@@ -395,7 +395,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * Clears the value of the 'date2' field.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder clearDate2() {
+        public ExhaustiveXmlTestModel.Builder clearDate2() {
             date2 = null;
             fieldSetFlags()[1] = false;
             return this;
@@ -415,7 +415,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * @param value The value of 'date3'.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder setDate3(java.time.Instant value) {
+        public ExhaustiveXmlTestModel.Builder setDate3(java.time.Instant value) {
             validate(fields()[2], value);
             this.date3 = value;
             fieldSetFlags()[2] = true;
@@ -435,7 +435,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * Clears the value of the 'date3' field.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder clearDate3() {
+        public ExhaustiveXmlTestModel.Builder clearDate3() {
             date3 = null;
             fieldSetFlags()[2] = false;
             return this;
@@ -455,7 +455,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * @param value The value of 'date4'.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder setDate4(java.time.Instant value) {
+        public ExhaustiveXmlTestModel.Builder setDate4(java.time.Instant value) {
             validate(fields()[3], value);
             this.date4 = value;
             fieldSetFlags()[3] = true;
@@ -475,7 +475,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * Clears the value of the 'date4' field.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder clearDate4() {
+        public ExhaustiveXmlTestModel.Builder clearDate4() {
             date4 = null;
             fieldSetFlags()[3] = false;
             return this;
@@ -495,7 +495,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * @param value The value of 'date5'.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder setDate5(java.time.Instant value) {
+        public ExhaustiveXmlTestModel.Builder setDate5(java.time.Instant value) {
             validate(fields()[4], value);
             this.date5 = value;
             fieldSetFlags()[4] = true;
@@ -515,7 +515,7 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
          * Clears the value of the 'date5' field.
          * @return This builder.
          */
-        public ExhaustiveXMLTestModel.Builder clearDate5() {
+        public ExhaustiveXmlTestModel.Builder clearDate5() {
             date5 = null;
             fieldSetFlags()[4] = false;
             return this;
@@ -523,9 +523,9 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
 
         @Override
         @SuppressWarnings("unchecked")
-        public ExhaustiveXMLTestModel build() {
+        public ExhaustiveXmlTestModel build() {
             try {
-                ExhaustiveXMLTestModel record = new ExhaustiveXMLTestModel();
+                ExhaustiveXmlTestModel record = new ExhaustiveXmlTestModel();
                 record.date1 = fieldSetFlags()[0] ? this.date1 : (java.time.Instant) defaultValue(fields()[0]);
                 record.date2 = fieldSetFlags()[1] ? this.date2 : (java.time.Instant) defaultValue(fields()[1]);
                 record.date3 = fieldSetFlags()[2] ? this.date3 : (java.time.Instant) defaultValue(fields()[2]);
@@ -541,8 +541,8 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
     }
 
     @SuppressWarnings("unchecked")
-    private static final org.apache.avro.io.DatumWriter<ExhaustiveXMLTestModel>
-            WRITER$ = (org.apache.avro.io.DatumWriter<ExhaustiveXMLTestModel>)MODEL$.createDatumWriter(SCHEMA$);
+    private static final org.apache.avro.io.DatumWriter<ExhaustiveXmlTestModel>
+            WRITER$ = (org.apache.avro.io.DatumWriter<ExhaustiveXmlTestModel>)MODEL$.createDatumWriter(SCHEMA$);
 
     @Override public void writeExternal(java.io.ObjectOutput out)
             throws java.io.IOException {
@@ -550,8 +550,8 @@ public class ExhaustiveXMLTestModel extends org.apache.avro.specific.SpecificRec
     }
 
     @SuppressWarnings("unchecked")
-    private static final org.apache.avro.io.DatumReader<ExhaustiveXMLTestModel>
-            READER$ = (org.apache.avro.io.DatumReader<ExhaustiveXMLTestModel>)MODEL$.createDatumReader(SCHEMA$);
+    private static final org.apache.avro.io.DatumReader<ExhaustiveXmlTestModel>
+            READER$ = (org.apache.avro.io.DatumReader<ExhaustiveXmlTestModel>)MODEL$.createDatumReader(SCHEMA$);
 
     @Override public void readExternal(java.io.ObjectInput in)
             throws java.io.IOException {

@@ -1,8 +1,9 @@
 package com.michelin.avroxmlmapper.constants;
 
-public final class XMLUtilsConstants {
+public final class AvroXmlMapperConstants {
     // default property for xml conversion
     public final static String XPATH_DEFAULT = "xpath";
+    public final static String XML_NAMESPACE_SELECTOR_DEFAULT = "xmlNamespaces";
 
     // DEFAULT map options (legacy, deprecated. Use key value separator in standard xpathSelector instead)
     public final static String XPATHKEY_DEFAULT = "xpathKey";
@@ -31,7 +32,6 @@ public final class XMLUtilsConstants {
      */
     public final static String XMLNS = "xmlns";
 
-    public final static String XML_NAMESPACE_SELECTOR_DEFAULT = "xmlNamespaces";
 
     /**
      * Constant to symbolize the position of an element

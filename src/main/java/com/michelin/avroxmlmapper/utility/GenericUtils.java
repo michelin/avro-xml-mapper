@@ -1,8 +1,8 @@
 package com.michelin.avroxmlmapper.utility;
 
-import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
+import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
 import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
-import com.michelin.avroxmlmapper.mapper.XMLToAvroUtils;
+import com.michelin.avroxmlmapper.mapper.XmlToAvroUtils;
 import org.apache.avro.Schema;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -66,7 +66,7 @@ public final class GenericUtils {
      *
      * @param document the document to convert
      * @return the result string
-     * @throws TransformerException
+     * @throws TransformerException if the conversion fails
      */
     public static String documentToString(Document document) throws TransformerException {
         StringWriter writer = new StringWriter();
@@ -98,9 +98,9 @@ public final class GenericUtils {
             }
 
             // build a reverse map of namespaces : URI (K) -> list of prefixes (V)
-            var mapOldNamespaces = XMLToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
-            XMLToAvroUtils.purgeNamespaces(document.getDocumentElement());
-            XMLToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, mapOldNamespaces);
+            var mapOldNamespaces = XmlToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
+            XmlToAvroUtils.purgeNamespaces(document.getDocumentElement());
+            XmlToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, mapOldNamespaces);
 
             return document;
 
@@ -197,11 +197,11 @@ public final class GenericUtils {
         for (int i = 0; i < mapAttributes.getLength(); i++) {
             Attr attr = (Attr) mapAttributes.item(i);
             String attrName = attr.getNodeName();
-            if (attrName.startsWith(XMLUtilsConstants.XMLNS + ":") || attrName.equals(XMLUtilsConstants.XMLNS)) {
-                if (attrName.equals(XMLUtilsConstants.XMLNS))
-                    mapPrefixes.put(XMLUtilsConstants.NO_PREFIX_NS, attr.getValue());
+            if (attrName.startsWith(AvroXmlMapperConstants.XMLNS + ":") || attrName.equals(AvroXmlMapperConstants.XMLNS)) {
+                if (attrName.equals(AvroXmlMapperConstants.XMLNS))
+                    mapPrefixes.put(AvroXmlMapperConstants.NO_PREFIX_NS, attr.getValue());
                 else
-                    mapPrefixes.put(attr.getNodeName().replace(XMLUtilsConstants.XMLNS + ":", ""), attr.getValue());
+                    mapPrefixes.put(attr.getNodeName().replace(AvroXmlMapperConstants.XMLNS + ":", ""), attr.getValue());
             }
         }
 

@@ -1,6 +1,6 @@
 package com.michelin.avroxmlmapper.utility;
 
-import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
+import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
 
 import java.util.regex.Pattern;
 
@@ -37,14 +37,14 @@ public class XPathFormatter {
 
         String xpathPrefixed = Pattern.compile(tagToAliasPattern).matcher(xpath).replaceAll(m -> {
             String match = m.group();
-            return match.substring(0, 1).matches("[/\\[]") ? match.substring(0, 1) + XMLUtilsConstants.NO_PREFIX_NS + ":" + match.substring(1) : XMLUtilsConstants.NO_PREFIX_NS + ":" + match;
+            return match.substring(0, 1).matches("[/\\[]") ? match.charAt(0) + AvroXmlMapperConstants.NO_PREFIX_NS + ":" + match.substring(1) : AvroXmlMapperConstants.NO_PREFIX_NS + ":" + match;
         });
 
         String xpathPrefixed2 = Pattern.compile(tagToAliasPattern2).matcher(xpathPrefixed).replaceAll(m -> {
             String subMatch1 = m.group(1);
             String subMatch3 = m.group(3);
 
-            return subMatch1 + XMLUtilsConstants.NO_PREFIX_NS + ":" +subMatch3;
+            return subMatch1 + AvroXmlMapperConstants.NO_PREFIX_NS + ":" + subMatch3;
         });
 
         // regex means the first character is a '@' followed by any word (i.e. an attribute)

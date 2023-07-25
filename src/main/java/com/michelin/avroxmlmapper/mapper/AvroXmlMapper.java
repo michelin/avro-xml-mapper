@@ -1,17 +1,15 @@
 package com.michelin.avroxmlmapper.mapper;
 
-import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
 import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.transform.TransformerException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
 
-import static com.michelin.avroxmlmapper.mapper.AvroToXMLUtils.createDocumentfromAvro;
+import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.XML_NAMESPACE_SELECTOR_DEFAULT;
+import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.XPATH_DEFAULT;
+import static com.michelin.avroxmlmapper.mapper.AvroToXmlUtils.createDocumentfromAvro;
 import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
 
 
@@ -25,104 +23,117 @@ public final class AvroXmlMapper {
     /* *************************************************** */
 
     /**
-     * @param stringDocument
-     * @param clazz
-     * @return
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
+     * <p>Converts an XML string into a SpecificRecordBase object. The mapping is based on the "xpath" property defined for each of the fields in the original avsc file.</p>
+     * <p>See README.md for more details.</p>
+     *
+     * @param stringDocument The XML string to convert
+     * @param clazz          The Avro object to convert to
+     * @param <T>            The type of the Avro object
+     * @return The SpecificRecordBase object.
+     * @throws NoSuchMethodException     If the method getClassSchema is not found
+     * @throws InvocationTargetException If the method getClassSchema cannot be invoked
+     * @throws IllegalAccessException    If the method getClassSchema cannot be accessed
      */
-    public static <T extends SpecificRecordBase> T convertXMLStringToAvro(String stringDocument, Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static <T extends SpecificRecordBase> T convertXmlStringToAvro(String stringDocument, Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Schema schema = (Schema) (clazz.getDeclaredMethod("getClassSchema").invoke(null));
         var document = stringToDocument(stringDocument, xmlNamespaces(schema));
-        return (T) XMLToAvroUtils.convert(document.getDocumentElement(), document.getDocumentElement(), clazz, getNamespaceContext(document), schema.getNamespace(), XMLUtilsConstants.XPATH_DEFAULT);
+        return XmlToAvroUtils.convert(document.getDocumentElement(), document.getDocumentElement(), clazz, getNamespaceContext(document), schema.getNamespace(), XPATH_DEFAULT);
     }
 
     /**
-     * converts a string input containing XML into the corresponding Avro class, using the xpathSelector given for mapping.
+     * Converts an XML string into a SpecificRecordBase object. The mapping is based on the chosen xpathSelector property defined for each of the fields in the original avsc file. See README.md for more details.
      *
-     * @param stringDocument
-     * @param clazz
-     * @param xpathSelector
-     * @return
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
+     * @param stringDocument The XML string to convert
+     * @param clazz          The Avro object to convert to
+     * @param xpathSelector  The xpathSelector property used to search for the xpathMapping in the Avro definition
+     * @param <T>            The type of the Avro object
+     * @return the SpecificRecordBase object.
+     * @throws NoSuchMethodException     If the method getClassSchema is not found
+     * @throws InvocationTargetException If the method getClassSchema cannot be invoked
+     * @throws IllegalAccessException    If the method getClassSchema cannot be accessed
      */
-    public static <T extends SpecificRecordBase> T convertXMLStringToAvro(String stringDocument, Class<T> clazz, String xpathSelector) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static <T extends SpecificRecordBase> T convertXmlStringToAvro(String stringDocument, Class<T> clazz, String xpathSelector) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Schema schema = (Schema) (clazz.getDeclaredMethod("getClassSchema").invoke(null));
         var document = stringToDocument(stringDocument, xmlNamespaces(schema));
-        return (T) XMLToAvroUtils.convert(document.getDocumentElement(), document.getDocumentElement(), clazz, getNamespaceContext(document), schema.getNamespace(), xpathSelector);
+        return XmlToAvroUtils.convert(document.getDocumentElement(), document.getDocumentElement(), clazz, getNamespaceContext(document), schema.getNamespace(), xpathSelector);
     }
-
-
-
-    /* ********************************** */
-    /* Build an Avro from an XML document */
-    /* ********************************** */
-
-    /**
-     * Converts, recursively, the content of an XML-node into SpecificRecord (avro).
-     *
-     * @param node             XML-node to convert
-     * @param clazz            class of the SpecificRecord to generate
-     * @param namespaceContext the namespace context
-     * @return SpecificRecord generated
-     */
-    public static <T extends SpecificRecordBase> T convertXMLDocumentToAvro(Node node, Class<T> clazz, NamespaceContext namespaceContext) {
-        return (T) XMLToAvroUtils.convert(node, node.cloneNode(true), clazz, namespaceContext, "io.michelin.choreography.avro", "xpath");
-    }
-
-    /**
-     * Converts, recursively, the content of an XML-node into SpecificRecord (avro).
-     *
-     * @param fullNode         XML-node to convert
-     * @param clazz            class of the SpecificRecord to generate
-     * @param namespaceContext the namespace context
-     * @param baseNamespace    base namespace for the generated SpecificRecord classes
-     * @return SpecificRecord generated
-     */
-    private static <T extends SpecificRecordBase> T convertXMLDocumentToAvro(Node fullNode, Class<? extends SpecificRecordBase> clazz, NamespaceContext namespaceContext, String baseNamespace) {
-        return (T) XMLToAvroUtils.convert(fullNode, fullNode, clazz, namespaceContext, baseNamespace, "xpath");
-    }
-
-
-
-    /* *************************************************** */
-    /* Build an XML document in String format from an Avro */
-    /* *************************************************** */
-
-    public static String convertAvroToXMLString(SpecificRecordBase record) throws TransformerException {
-        return documentToString(createDocumentfromAvro(record, XMLUtilsConstants.XPATH_DEFAULT, Optional.of(XMLUtilsConstants.XML_NAMESPACE_SELECTOR_DEFAULT)));
-    }
-
-    public static String convertAvroToXMLString(SpecificRecordBase record, String xpathSelector) throws TransformerException {
-        return documentToString(createDocumentfromAvro(record, xpathSelector, Optional.of(XMLUtilsConstants.XML_NAMESPACE_SELECTOR_DEFAULT)));
-    }
-
 
     /* *************************************************** */
     /* Build an XML document in String format from an Avro */
     /* *************************************************** */
 
     /**
-     * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
+     * Create an XML in String format from a SpecificRecordBase, using default "xpath" and "xmlNamespaces" properties defined in the Avro model to build the XML structure.
      *
-     * @param record the global SpecificRecordBase containing the entire data to parse in XML
-     * @return the document produced
+     * @param record The SpecificRecordBase containing the entire data to parse in XML
+     * @return The XML in String format
+     * @throws TransformerException If the transformation fails
      */
-    private static Document convertAvroToXMLDocument(SpecificRecordBase record) {
-        return createDocumentfromAvro(record, XMLUtilsConstants.XPATH_DEFAULT, Optional.of(XMLUtilsConstants.XML_NAMESPACE_SELECTOR_DEFAULT));
+    public static String convertAvroToXmlString(SpecificRecordBase record) throws TransformerException {
+        return documentToString(createDocumentfromAvro(record, XPATH_DEFAULT, XML_NAMESPACE_SELECTOR_DEFAULT));
     }
 
     /**
-     * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
+     * Create an XML in String format from a SpecificRecordBase, using the provided xpathSelector and default "xmlNamespaces" properties defined in the Avro model to build the XML structure.
      *
-     * @param record        the global SpecificRecordBase containing the entire data to parse in XML
+     * @param record        The SpecificRecordBase containing the entire data to parse in XML
      * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
-     * @return the document produced
+     * @return The XML in String format
+     * @throws TransformerException If the transformation fails
      */
-    private static Document convertAvroToXMLDocument(SpecificRecordBase record, String xpathSelector) {
-        return createDocumentfromAvro(record, xpathSelector, Optional.of(XMLUtilsConstants.XML_NAMESPACE_SELECTOR_DEFAULT));
+    public static String convertAvroToXmlString(SpecificRecordBase record, String xpathSelector) throws TransformerException {
+        return documentToString(createDocumentfromAvro(record, xpathSelector, XML_NAMESPACE_SELECTOR_DEFAULT));
+    }
+
+    /**
+     * Create an XML in String format from a SpecificRecordBase, using the provided xpathSelector and xmlNamespacesSelector properties defined in the Avro model to build the XML structure.
+     *
+     * @param record                The SpecificRecordBase containing the entire data to parse in XML
+     * @param xpathSelector         Name of the variable defining the xpath of the avsc file that needs to be used
+     * @param xmlNamespacesSelector Name of the variable defining the xmlNamespaces of the avsc file that needs to be used
+     * @return The XML in String format
+     * @throws TransformerException If the transformation fails
+     */
+    public static String convertAvroToXmlString(SpecificRecordBase record, String xpathSelector, String xmlNamespacesSelector) throws TransformerException {
+        return documentToString(createDocumentfromAvro(record, xpathSelector, xmlNamespacesSelector));
+    }
+
+
+    /* ********************************** */
+    /* Build an XML document from an Avro */
+    /* ********************************** */
+
+    /**
+     * Create a Document from a SpecificRecordBase, using default "xpath" and "xmlNamespaces" properties defined in the Avro model to build the XML structure.
+     *
+     * @param record The global SpecificRecordBase containing the entire data to parse in XML
+     * @return The document produced
+     */
+    public static Document convertAvroToXmlDocument(SpecificRecordBase record) {
+        return createDocumentfromAvro(record, XPATH_DEFAULT, XML_NAMESPACE_SELECTOR_DEFAULT);
+    }
+
+    /**
+     * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
+     *
+     * @param record        The SpecificRecordBase containing the entire data to parse in XML
+     * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
+     * @return The document produced
+     */
+    public static Document convertAvroToXmlDocument(SpecificRecordBase record, String xpathSelector) {
+        return createDocumentfromAvro(record, xpathSelector, XML_NAMESPACE_SELECTOR_DEFAULT);
+    }
+
+
+    /**
+     * Create a Document from a SpecificRecordBase, using the provided xpathSelector and xmlNamespacesSelector properties defined in the Avro model to build the XML structure.
+     *
+     * @param record               The SpecificRecordBase containing the entire data to parse in XML
+     * @param xpathSelector        Name of the variable defining the xpath of the avsc file that needs to be used
+     * @param xmlNamespaceSelector Name of the variable defining the xmlNamespaces of the avsc file that needs to be used
+     * @return The document produced
+     */
+    public static Document convertAvroToXmlDocument(SpecificRecordBase record, String xpathSelector, String xmlNamespaceSelector) {
+        return createDocumentfromAvro(record, xpathSelector, xmlNamespaceSelector);
     }
 }
