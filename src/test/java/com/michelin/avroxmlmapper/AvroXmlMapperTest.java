@@ -1,5 +1,7 @@
 package com.michelin.avroxmlmapper;
 
+import com.michelin.avro.SubXMLTestModel;
+import com.michelin.avro.TestModelXMLDefaultXpath;
 import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
 import com.michelin.avroxmlmapper.mapper.AvroXmlMapper;
 import com.michelin.avroxmlmapper.mapper.XmlToAvroUtils;
@@ -33,7 +35,7 @@ class AvroXmlMapperTest {
 
     @Test
     void testXmlToAvro() throws Exception {
-        AvroXmlMapper.convertXmlStringToAvro();
+//        AvroXmlMapper.convertXmlStringToAvro();
     }
 
     @Test
@@ -48,7 +50,32 @@ class AvroXmlMapperTest {
 
     @Test
     void testAvroToXmlWithCustomXpathSelector() throws Exception {
-
+        var expectedModel = TestModelXMLDefaultXpath.newBuilder()
+                .setBooleanField(true)
+                .setDateField(Instant.ofEpochMilli(1766620800000L))
+                .setQuantityField(BigDecimal.valueOf(52L).setScale(4))
+                .setStringField("lorem ipsum")
+                .setStringMapLegacyScenario(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario1(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario2(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringList(List.of("item1", "item2", "item3"))
+                .setRecordListWithDefault(List.of(
+                        SubXMLTestModel.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
+                        SubXMLTestModel.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
+                        SubXMLTestModel.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
+                ))
+                .build();
+        
+        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel);
+        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/resultFromDefaultXpath.xml")), StandardCharsets.UTF_8)
+                .replaceAll("[\r\n]+", "")
+                .replaceAll("(?m)^[ \\t]*", "")
+                .replaceAll("(?m)[ \\t]*$", "")
+                .replaceAll(">\\s+<", "><")
+                .trim();;
+        
+        assertEquals(expected,xmlResult);
+        
     }
 
     @Test

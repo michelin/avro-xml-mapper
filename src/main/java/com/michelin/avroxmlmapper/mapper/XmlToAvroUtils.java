@@ -400,9 +400,14 @@ public final class XmlToAvroUtils {
 
     }
 
+    /**
+     * Extracts 
+     * 
+     * @param node
+     * @param oldNamespaces
+     * @return
+     */
     public static Map<String, List<String>> extractNamespaces(Node node, Map<String, List<String>> oldNamespaces) {
-
-
         asList(node.getChildNodes()).forEach(childNode -> extractNamespaces(childNode, oldNamespaces));
 
         var attributes = node.getAttributes();

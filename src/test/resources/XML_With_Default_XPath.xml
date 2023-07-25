@@ -1,5 +1,4 @@
-<root xmlns="namespace1"
-        xmlns:ns2="namespace2">
+<root xmlns="namespace1" xmlns:ns2="namespace2">
     <ns2:stringField>lorem ipsum</ns2:stringField>
     <booleanField>true</booleanField>
     <quantityField>52</quantityField>
@@ -18,7 +17,7 @@
         <key>key3</key>
         <value>value3</value>
     </stringMapLegacyScenario>
-    
+
     <stringMapScenario1>
         <key>key1</key>
         <value>value1</value>
@@ -31,19 +30,19 @@
         <key>key3</key>
         <value>value3</value>
     </stringMapScenario1>
-    
+
     <stringMapScenario2>
         <entry key="key1">value1</entry>
         <entry key="key2">value2</entry>
         <entry key="key3">value3</entry>
     </stringMapScenario2>
-    
+
     <stringList>
         <listItem>item1</listItem>
         <listItem>item2</listItem>
         <listItem>item3</listItem>
     </stringList>
-    
+
     <recordList>
         <listItem>
             <subStringField>item1</subStringField>

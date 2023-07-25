@@ -13,8 +13,8 @@
   "type": "record",
   "name": "TestModelXMLMultipleXpath",
   "fields": [
-    {"name": "stringField", "type" : ["null","string"], "default": null, "customXpath1": "ns2:stringField","customXpath2": "ns2:stringField"},
-    {"name": "stringFieldWithDefault", "type" : ["string","null"], "default": "defaultString", "customXpath1": "stringFieldWithDefault", "customXpath2": "stringFieldWithDefault"},
+    {"name": "stringField", "type" : ["null","string"], "default": null, "customXpath1": "ns2:stringField","customXpath2": "ns2:customStringField2"},
+    {"name": "stringFieldWithDefault", "type" : ["string","null"], "default": "defaultString", "customXpath1": "stringFieldWithDefault"},
     {"name": "booleanField","type" : "boolean", "default": false, "customXpath1": "booleanField"},
     {"name": "quantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null, "customXpath1": "quantityField", "customXpath2": "quantityField"},
     {"name": "quantityFieldWithDefault", "type" : [{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4},"null"], "default": "\u0007\u00D0\u0000", "customXpath1": "quantityFieldWithDefault", "customXpath2": "quantityFieldWithDefault"},
