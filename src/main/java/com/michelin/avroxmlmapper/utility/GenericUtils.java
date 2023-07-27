@@ -24,6 +24,8 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.XML_NAMESPACE_SELECTOR_DEFAULT;
+
 /**
  * Generic utility class for conversions.
  */
@@ -54,14 +56,14 @@ public final class GenericUtils {
     }
 
     /**
-     * Get the XML namespaces from a given XML schema
+     * Get the default XML namespaces from a given XML schema ("xmlNamespaces" root attribute)
      *
      * @param schema The current XML schema
      * @return A map containing the namespaces
      */
     @SuppressWarnings("unchecked")
     public static Map<String, String> xmlNamespaces(Schema schema) {
-        return (Map<String, String>) schema.getObjectProp("xmlNamespaces");
+        return (Map<String, String>) schema.getObjectProp(XML_NAMESPACE_SELECTOR_DEFAULT);
     }
 
     /**

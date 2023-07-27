@@ -1,29 +1,20 @@
 package com.michelin.avroxmlmapper;
 
 import com.michelin.avro.SubXMLTestModel;
+import com.michelin.avro.SubXMLTestModelMultipleXpath;
 import com.michelin.avro.TestModelXMLDefaultXpath;
-import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
+import com.michelin.avro.TestModelXMLMultipleXpath;
 import com.michelin.avroxmlmapper.mapper.AvroXmlMapper;
-import com.michelin.avroxmlmapper.mapper.XmlToAvroUtils;
-import com.michelin.avroxmlmapper.utility.GenericUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,21 +26,122 @@ class AvroXmlMapperTest {
 
     @Test
     void testXmlToAvro() throws Exception {
-//        AvroXmlMapper.convertXmlStringToAvro();
+        var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlDefaultXpath.xml")), StandardCharsets.UTF_8);
+
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class);
+
+        assertEquals(buildDefaultXpathTestModel(), result);
     }
 
     @Test
     void testXmlToAvroWithCustomXpathSelector() throws Exception {
+        var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom1.xml")), StandardCharsets.UTF_8);
 
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class, "customXpath1");
+
+        assertEquals(buildDefaultXpathTestModel(), result);
+    }
+
+    @Test
+    void testXmlToAvroWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
+        var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom2AndCustomXmlNamespaces.xml")), StandardCharsets.UTF_8);
+
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class, "customXpath2", "xmlNamespacesCustom2");
+
+        assertEquals(buildDefaultXpathTestModel(), result);
     }
 
     @Test
     void testAvroToXml() throws Exception {
+        var expectedModel = buildDefaultXpathTestModel();
 
+        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel);
+        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlDefaultXpath.xml")), StandardCharsets.UTF_8)
+                .replaceAll("[\r\n]+", "")
+                .replaceAll("(?m)^[ \\t]*", "")
+                .replaceAll("(?m)[ \\t]*$", "")
+                .replaceAll(">\\s+<", "><")
+                .trim();
+
+        assertEquals(expected, xmlResult);
     }
 
     @Test
     void testAvroToXmlWithCustomXpathSelector() throws Exception {
+
+        var expectedModel = TestModelXMLMultipleXpath.newBuilder()
+                .setBooleanField(true)
+                .setDateField(Instant.ofEpochMilli(1766620800000L))
+                .setQuantityField(BigDecimal.valueOf(52L).setScale(4))
+                .setStringField("lorem ipsum")
+                .setStringMapLegacyScenario(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario1(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario2(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringList(List.of("item1", "item2", "item3"))
+                .setRecordListWithDefault(List.of(
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
+                ))
+                .build();
+
+        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel, "customXpath1");
+        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom1.xml")), StandardCharsets.UTF_8)
+                .replaceAll("[\r\n]+", "")
+                .replaceAll("(?m)^[ \\t]*", "")
+                .replaceAll("(?m)[ \\t]*$", "")
+                .replaceAll(">\\s+<", "><")
+                .trim();
+
+        assertEquals(expected, xmlResult);
+    }
+
+    @Test
+    void testAvroToXmlWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
+        var expectedModel = TestModelXMLMultipleXpath.newBuilder()
+                .setBooleanField(true)
+                .setDateField(Instant.ofEpochMilli(1766620800000L))
+                .setQuantityField(BigDecimal.valueOf(52L).setScale(4))
+                .setStringField("lorem ipsum")
+                .setStringMapLegacyScenario(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario1(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario2(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringList(List.of("item1", "item2", "item3"))
+                .setRecordListWithDefault(List.of(
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
+                ))
+                .build();
+
+        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel, "customXpath2", "xmlNamespacesCustom2");
+        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom2AndCustomXmlNamespaces.xml")), StandardCharsets.UTF_8)
+                .replaceAll("[\r\n]+", "")
+                .replaceAll("(?m)^[ \\t]*", "")
+                .replaceAll("(?m)[ \\t]*$", "")
+                .replaceAll(">\\s+<", "><")
+                .trim();
+
+        assertEquals(expected, xmlResult);
+    }
+
+    @Test
+    void testAvroToXMLDocument() throws Exception {
+        var expectedModel = buildDefaultXpathTestModel();
+
+        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(expectedModel);
+
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlDefaultXpath.xml")), StandardCharsets.UTF_8);
+        InputSource is = new InputSource(new StringReader(expected));
+        var document = builder.parse(is);
+
+        assertEquals(document, xmlResult);
+    }
+
+    @Test
+    void testAvroToXmlDocumentWithCustomXpathSelector() throws Exception {
         var expectedModel = TestModelXMLDefaultXpath.newBuilder()
                 .setBooleanField(true)
                 .setDateField(Instant.ofEpochMilli(1766620800000L))
@@ -65,37 +157,65 @@ class AvroXmlMapperTest {
                         SubXMLTestModel.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
                 ))
                 .build();
-        
-        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel);
-        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/resultFromDefaultXpath.xml")), StandardCharsets.UTF_8)
-                .replaceAll("[\r\n]+", "")
-                .replaceAll("(?m)^[ \\t]*", "")
-                .replaceAll("(?m)[ \\t]*$", "")
-                .replaceAll(">\\s+<", "><")
-                .trim();;
-        
-        assertEquals(expected,xmlResult);
-        
-    }
 
-    @Test
-    void testAvroToXmlWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
+        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(expectedModel, "customXpath1");
 
-    }
 
-    @Test
-    void testAvroToXMLDocument() throws Exception {
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom1.xml")), StandardCharsets.UTF_8);
+        InputSource is = new InputSource(new StringReader(expected));
+        var document = builder.parse(is);
 
-    }
-
-    @Test
-    void testAvroToXmlDocumentWithCustomXpathSelector() throws Exception {
+        assertEquals(document, xmlResult);
 
     }
 
     @Test
     void testAvroToXmlDocumentWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
+        var expectedModel = TestModelXMLDefaultXpath.newBuilder()
+                .setBooleanField(true)
+                .setDateField(Instant.ofEpochMilli(1766620800000L))
+                .setQuantityField(BigDecimal.valueOf(52L).setScale(4))
+                .setStringField("lorem ipsum")
+                .setStringMapLegacyScenario(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario1(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario2(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringList(List.of("item1", "item2", "item3"))
+                .setRecordListWithDefault(List.of(
+                        SubXMLTestModel.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
+                        SubXMLTestModel.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
+                        SubXMLTestModel.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
+                ))
+                .build();
 
+        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(expectedModel, "customXpath2", "xmlNamespacesCustom2");
+
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        var expected = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom2AndCustomXmlNamespaces.xml")), StandardCharsets.UTF_8);
+        InputSource is = new InputSource(new StringReader(expected));
+        var document = builder.parse(is);
+
+        assertEquals(document, xmlResult);
+
+    }
+
+    private TestModelXMLDefaultXpath buildDefaultXpathTestModel(){
+        return TestModelXMLDefaultXpath.newBuilder()
+                .setBooleanField(true)
+                .setDateField(Instant.ofEpochMilli(1766620800000L))
+                .setQuantityField(BigDecimal.valueOf(52L).setScale(4))
+                .setStringField("lorem ipsum")
+                .setStringMapLegacyScenario(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario1(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario2(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringList(List.of("item1", "item2", "item3"))
+                .setRecordListWithDefault(List.of(
+                        SubXMLTestModel.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
+                        SubXMLTestModel.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
+                        SubXMLTestModel.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
+                ))
+                .build();
     }
 
     /*

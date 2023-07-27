@@ -1,19 +1,19 @@
 {
   "namespace": "com.michelin.avro",
   "xmlNamespaces": {
-    "null":"namespace1",
-    "ns2":"namespace2"
+    "null":"http://namespace.uri/default",
+    "ns1":"http://namespace.uri/1"
   },
   "xmlNamespacesCustom2": {
-    "null":"namespace1",
-    "ns2":"namespace2"
+    "null":"http://namespace.custom.uri/default",
+    "ns2":"http://namespace.custom.uri/2"
   },
   "customXpath1" : "/root",
   "customXpath2" : "/root",
   "type": "record",
   "name": "TestModelXMLMultipleXpath",
   "fields": [
-    {"name": "stringField", "type" : ["null","string"], "default": null, "customXpath1": "ns2:stringField","customXpath2": "ns2:customStringField2"},
+    {"name": "stringField", "type" : ["null","string"], "default": null, "customXpath1": "ns1:stringField","customXpath2": "ns2:customStringField2"},
     {"name": "stringFieldWithDefault", "type" : ["string","null"], "default": "defaultString", "customXpath1": "stringFieldWithDefault"},
     {"name": "booleanField","type" : "boolean", "default": false, "customXpath1": "booleanField"},
     {"name": "quantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null, "customXpath1": "quantityField", "customXpath2": "quantityField"},

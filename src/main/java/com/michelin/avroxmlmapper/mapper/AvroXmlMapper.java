@@ -58,6 +58,25 @@ public final class AvroXmlMapper {
         return XmlToAvroUtils.convert(document.getDocumentElement(), document.getDocumentElement(), clazz, getNamespaceContext(document), schema.getNamespace(), xpathSelector);
     }
 
+    /**
+     * Converts an XML string into a SpecificRecordBase object. The mapping is based on the chosen xpathSelector property defined for each of the fields in the original avsc file. See README.md for more details.
+     *
+     * @param stringDocument        The XML string to convert
+     * @param clazz                 The Avro object to convert to
+     * @param xpathSelector         The xpathSelector property used to search for the xpathMapping in the Avro definition
+     * @param xmlNamespacesSelector Name of the variable defining the xmlNamespaces of the avsc file that needs to be used for unifying namespace definitions
+     * @param <T>                   The type of the Avro object
+     * @return the SpecificRecordBase object.
+     * @throws NoSuchMethodException     If the method getClassSchema is not found
+     * @throws InvocationTargetException If the method getClassSchema cannot be invoked
+     * @throws IllegalAccessException    If the method getClassSchema cannot be accessed
+     */
+    public static <T extends SpecificRecordBase> T convertXmlStringToAvro(String stringDocument, Class<T> clazz, String xpathSelector, String xmlNamespacesSelector) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Schema schema = (Schema) (clazz.getDeclaredMethod("getClassSchema").invoke(null));
+        var document = stringToDocument(stringDocument, xmlNamespaces(schema, xmlNamespacesSelector));
+        return XmlToAvroUtils.convert(document.getDocumentElement(), document.getDocumentElement(), clazz, getNamespaceContext(document), schema.getNamespace(), xpathSelector);
+    }
+
     /* *************************************************** */
     /* Build an XML document in String format from an Avro */
     /* *************************************************** */
