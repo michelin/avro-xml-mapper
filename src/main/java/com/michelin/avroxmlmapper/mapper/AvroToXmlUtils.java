@@ -42,8 +42,8 @@ public final class AvroToXmlUtils {
             Map<String, String> mapNamespaces;
             if (namespaceSelector != null) {
                 mapNamespaces = xmlNamespaces(record.getSchema(), namespaceSelector);
-                mapNamespaces.put("", mapNamespaces.get("null"));
-                mapNamespaces.remove("null");
+                mapNamespaces.put("", mapNamespaces.get(DEFAULT_NAMESPACE));
+                mapNamespaces.remove(DEFAULT_NAMESPACE);
             } else {
                 mapNamespaces = Collections.emptyMap();
             }

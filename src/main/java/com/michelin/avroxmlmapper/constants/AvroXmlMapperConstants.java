@@ -10,6 +10,8 @@ public final class AvroXmlMapperConstants {
     public final static String XPATHMAP_DEFAULT = "xpathMap";
     public final static String XPATHVALUE_DEFAULT = "xpathValue";
 
+    public final static String DEFAULT_NAMESPACE = "null";
+
 
 
     /**

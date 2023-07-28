@@ -120,7 +120,15 @@ public final class XmlToAvroUtils {
                     var orphanElementNode = elementNode.cloneNode(true);
                     mapPrimitive.put(xPathStringEvaluation(elementNode, orphanElementNode, keyXpath, namespaceContext), parseValue(valueSchema.getType(), xPathStringEvaluation(elementNode, orphanElementNode, valueXpath, namespaceContext)));
                 }
-                record.put(field.name(), mapPrimitive);
+//                if(mapPrimitive.size() > 0) {
+                    record.put(field.name(), mapPrimitive);
+//                }
+//                else{
+//                    // Set avro default value if it's different from null
+//                    if (field.hasDefaultValue() && field.defaultVal() != JsonProperties.NULL_VALUE) {
+//                        record.put(field.name(), field.defaultVal());
+//                    }
+//                }
             } else { // for example a map<String, SpecificRecordBase>
                 throw new NotImplementedException("Converting from XML to '" + valueSchema.getType() + "' type is not implemented yet");
             }
@@ -340,18 +348,21 @@ public final class XmlToAvroUtils {
 
     /**
      * <p>Redefines all xml namespaces used in the xml document at the root markup.</p>
-     * <p></p>
+     * <p>Tries to match avsc-defined namespaces with the actual xml namespaces and deduplicates if there are any namespaces pointing to the same URI</p>
      *
-     *
-     * @param document
-     * @param xmlNamespacesMap
-     * @param mapOldNamespaces
+     * @param document         the xml document
+     * @param xmlNamespacesMap the map of namespaces defined in the avsc schema
+     * @param mapOldNamespaces the map of namespaces defined in the xml document
      */
     public static void simplifyNamespaces(Document document, Map<String, String> xmlNamespacesMap, Map<String, List<String>> mapOldNamespaces) {
         // all namespaces are redefined on root element, matching old namespaces and target namespaces on URI
         for (Map.Entry<String, String> entry : xmlNamespacesMap.entrySet()) {
+            // Check xml and avsc match on namespaces definitions
             // if the namespace is the main namespace without prefix (xmlns=...), we use the "null" key
-            if ("null".equalsIgnoreCase(entry.getKey())) {
+            if (DEFAULT_NAMESPACE.equalsIgnoreCase(entry.getKey())) {
+                if (mapOldNamespaces.get(entry.getValue()) == null) {
+                    throw new NullPointerException("The default namespace uri provided in the avsc schema (\"" + entry.getValue() + "\") is not defined in the XML document. Either fix your avsc schema to match the default namespace defined in the xml, or make sure that the xml document you are converting is not faulty.");
+                }
                 document.getDocumentElement().setAttribute(XMLNS + ":" + NO_PREFIX_NS, entry.getValue());
                 for (String prefixToReplace : mapOldNamespaces.get(entry.getValue())) {
                     if (prefixToReplace.equals(NO_PREFIX_NS)) {
@@ -394,7 +405,7 @@ public final class XmlToAvroUtils {
      * <p>Recursively removes all namespace definitions from the given node and its children.</p>
      * <p>Namespaces definition are found by searching for attributes starting with the "xmlns" char sequence.</p>
      *
-     * @param node  The node to purge
+     * @param node The node to purge
      */
     public static void purgeNamespaces(Node node) {
 
@@ -420,8 +431,8 @@ public final class XmlToAvroUtils {
     }
 
     /**
-     * Extracts 
-     * 
+     * Extracts
+     *
      * @param node
      * @param oldNamespaces
      * @return

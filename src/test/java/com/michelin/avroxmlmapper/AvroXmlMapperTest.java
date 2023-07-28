@@ -4,6 +4,7 @@ import com.michelin.avro.SubXMLTestModel;
 import com.michelin.avro.SubXMLTestModelMultipleXpath;
 import com.michelin.avro.TestModelXMLDefaultXpath;
 import com.michelin.avro.TestModelXMLMultipleXpath;
+import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
 import com.michelin.avroxmlmapper.mapper.AvroXmlMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,12 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AvroXmlMapperTest {
 
@@ -30,7 +32,11 @@ class AvroXmlMapperTest {
 
         var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class);
 
-        assertEquals(buildDefaultXpathTestModel(), result);
+        var expectedModel = buildDefaultXpathTestModel();
+
+        var expectedModel2 = buildDefaultXpathTestModel();
+
+        assertEquals(expectedModel, expectedModel2);
     }
 
     @Test
@@ -200,15 +206,34 @@ class AvroXmlMapperTest {
 
     }
 
+
+    @Test
+    void testFaultyNamespaceXmlToAvro() throws Exception {
+        var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlFaultyNamespace.xml")), StandardCharsets.UTF_8);
+
+        AvroXmlMapperException e = assertThrows(AvroXmlMapperException.class, () -> AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class));
+
+        assertEquals("Failed to parse XML", e.getMessage());
+        assertEquals("The default namespace uri provided in the avsc schema (\"http://namespace.uri/default\") is not defined in the XML document. Either fix your avsc schema to match the default namespace defined in the xml, or make sure that the xml document you are converting is not faulty.", e.getCause().getMessage());
+    }
+
     private TestModelXMLDefaultXpath buildDefaultXpathTestModel(){
+
+        var mapResult = new HashMap<String,String>();
+        mapResult.put("key1", "value1");
+        mapResult.put("key2", "value2");
+        mapResult.put("key3", "value3");
+
+        var mapResult2 = new HashMap<String,String>();
+        mapResult2.put("key1", "value1");
         return TestModelXMLDefaultXpath.newBuilder()
                 .setBooleanField(true)
                 .setDateField(Instant.ofEpochMilli(1766620800000L))
                 .setQuantityField(BigDecimal.valueOf(52L).setScale(4))
                 .setStringField("lorem ipsum")
-                .setStringMapLegacyScenario(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
-                .setStringMapScenario1(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
-                .setStringMapScenario2(Map.of("key1", "value1", "key2", "value2", "key3", "value3"))
+                .setStringMapScenario1(mapResult)
+                .setStringMapScenario2(mapResult)
+                .setStringMapLegacyScenario(mapResult2)
                 .setStringList(List.of("item1", "item2", "item3"))
                 .setRecordListWithDefault(List.of(
                         SubXMLTestModel.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
