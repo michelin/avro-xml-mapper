@@ -34,9 +34,7 @@ class AvroXmlMapperTest {
 
         var expectedModel = buildDefaultXpathTestModel();
 
-        var expectedModel2 = buildDefaultXpathTestModel();
-
-        assertEquals(expectedModel, expectedModel2);
+        assertEquals(expectedModel, result);
     }
 
     @Test

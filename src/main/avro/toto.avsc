@@ -1,8 +1,0 @@
-{
-  "namespace": "com.michelin.avro",
-  "type": "record",
-  "name": "Toto",
-  "fields": [
-    {"name": "stringField", "type" : ["null","string"], "default": null}
-  ]
-}
