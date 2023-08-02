@@ -17,9 +17,9 @@
     {"name": "stringFieldWithDefault", "type" : ["string","null"], "default": "defaultString", "customXpath1": "stringFieldWithDefault"},
     {"name": "booleanField","type" : "boolean", "default": false, "customXpath1": "booleanField"},
     {"name": "quantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null, "customXpath1": "quantityField", "customXpath2": "quantityField"},
-    {"name": "quantityFieldWithDefault", "type" : [{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4},"null"], "default": "\u0007\u00D0\u0000", "customXpath1": "quantityFieldWithDefault", "customXpath2": "quantityFieldWithDefault"},
-    {"name": "dateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null, "customXpath1": "dateField", "customXpath2": "quantityFieldWithDefault"},
-    {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "customXpath1": "dateFieldWithDefault", "customXpath2": "dateFieldWithDefault"},
+    {"name": "quantityFieldWithDefault", "type" : [{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4},"null"], "default": "\u0007\u00D0\u0000", "customXpath1": "quantityFieldWithDefault", "customXpath2": "altQuantityFieldWithDefault"},
+    {"name": "dateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null, "customXpath1": "dateField", "customXpath2": "altWrapper/altDateField"},
+    {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "customXpath1": "dateFieldWithDefault", "customXpath2": "altWrapper/dateFieldWithDefault"},
     {
       "name": "stringMapLegacyScenario",
       "xpathMap": "stringMapLegacyScenario",

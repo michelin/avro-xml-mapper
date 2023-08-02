@@ -41,16 +41,16 @@ class AvroXmlMapperTest {
     void testXmlToAvroWithCustomXpathSelector() throws Exception {
         var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom1.xml")), StandardCharsets.UTF_8);
 
-        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class, "customXpath1");
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLMultipleXpath.class, "customXpath1");
 
-        assertEquals(buildDefaultXpathTestModel(), result);
+        assertEquals(buildMultiXpathTestModel(), result);
     }
 
     @Test
     void testXmlToAvroWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
         var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom2AndCustomXmlNamespaces.xml")), StandardCharsets.UTF_8);
 
-        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class, "customXpath2", "xmlNamespacesCustom2");
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLMultipleXpath.class, "customXpath2", "xmlNamespacesCustom2");
 
         assertEquals(buildDefaultXpathTestModel(), result);
     }
@@ -237,6 +237,29 @@ class AvroXmlMapperTest {
                         SubXMLTestModel.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
                         SubXMLTestModel.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
                         SubXMLTestModel.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
+                ))
+                .build();
+    }    
+    
+    private TestModelXMLMultipleXpath buildMultiXpathTestModel(){
+
+        var mapResult = new HashMap<String,String>();
+        mapResult.put("key1", "value1");
+        mapResult.put("key2", "value2");
+        mapResult.put("key3", "value3");
+
+        return TestModelXMLMultipleXpath.newBuilder()
+                .setBooleanField(true)
+                .setDateField(Instant.ofEpochMilli(1766620800000L))
+                .setQuantityField(BigDecimal.valueOf(52L).setScale(4))
+                .setStringField("lorem ipsum")
+                .setStringMapScenario1(mapResult)
+                .setStringMapScenario2(mapResult)
+                .setStringList(List.of("item1", "item2", "item3"))
+                .setRecordListWithDefault(List.of(
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
+                        SubXMLTestModelMultipleXpath.newBuilder().setSubStringField("item3").setSubIntField(3).setSubStringFieldFromAttribute("attribute3").build()
                 ))
                 .build();
     }

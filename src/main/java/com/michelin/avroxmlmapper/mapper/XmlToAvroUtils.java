@@ -120,15 +120,15 @@ public final class XmlToAvroUtils {
                     var orphanElementNode = elementNode.cloneNode(true);
                     mapPrimitive.put(xPathStringEvaluation(elementNode, orphanElementNode, keyXpath, namespaceContext), parseValue(valueSchema.getType(), xPathStringEvaluation(elementNode, orphanElementNode, valueXpath, namespaceContext)));
                 }
-//                if(mapPrimitive.size() > 0) {
+                if(mapPrimitive.size() > 0) {
                     record.put(field.name(), mapPrimitive);
-//                }
-//                else{
-//                    // Set avro default value if it's different from null
-//                    if (field.hasDefaultValue() && field.defaultVal() != JsonProperties.NULL_VALUE) {
-//                        record.put(field.name(), field.defaultVal());
-//                    }
-//                }
+                }
+                else{
+                    // Set avro default value if it's different from null
+                    if (field.hasDefaultValue() && field.defaultVal() != JsonProperties.NULL_VALUE) {
+                        record.put(field.name(), field.defaultVal());
+                    }
+                }
             } else { // for example a map<String, SpecificRecordBase>
                 throw new NotImplementedException("Converting from XML to '" + valueSchema.getType() + "' type is not implemented yet");
             }
