@@ -1,7 +1,7 @@
 <root
         xmlns="http://namespace.uri/default"
-        xmlns:altns="http://namespace.uri/1">
-    <altns:stringField>lorem ipsum</altns:stringField>
+        xmlns:ns1="http://namespace.uri/1">
+    <ns1:stringField>lorem ipsum</ns1:stringField>
     <stringFieldWithDefault>defaultString</stringFieldWithDefault>
     <booleanField>true</booleanField>
     <quantityField>52</quantityField>

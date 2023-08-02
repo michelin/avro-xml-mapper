@@ -91,23 +91,16 @@ public final class XmlToAvroUtils {
 
         // initialize value Schema
         Schema valueSchema = fieldType.getValueType();
-        String rootXpath;
-        String keyXpath;
-        String valueXpath;
+        String rootXpath = null, keyXpath = null, valueXpath = null;
         // try to get the map xpath properties
         LinkedHashMap<String, String> mapXpathProperties = (LinkedHashMap<String, String>) field.getObjectProp(xpathSelector);
 
         if (mapXpathProperties != null) {
             // new scenarios
-            rootXpath = XPathFormatter.format(mapXpathProperties.get("rootXpath"));
-            keyXpath = XPathFormatter.format(mapXpathProperties.get("keyXpath"));
-            valueXpath = XPathFormatter.format(mapXpathProperties.get("valueXpath"));
-        } else {
-            keyXpath = XPathFormatter.format(field.getProp(XPATHKEY_DEFAULT));
-            rootXpath = XPathFormatter.format(field.getProp(XPATHMAP_DEFAULT));
-            valueXpath = XPathFormatter.format(field.getProp(XPATHVALUE_DEFAULT));
+            rootXpath = XPathFormatter.format(mapXpathProperties.get(XPATH_MAP_ROOT_PROPERTY_NAME));
+            keyXpath = XPathFormatter.format(mapXpathProperties.get(XPATH_MAP_KEY_PROPERTY_NAME));
+            valueXpath = XPathFormatter.format(mapXpathProperties.get(XPATH_MAP_VALUE_PROPERTY_NAME));
         }
-
         if (rootXpath != null && keyXpath != null && valueXpath != null) {
             if (valueSchema.getType() == Schema.Type.STRING
                     || valueSchema.getType() == Schema.Type.INT
@@ -120,10 +113,9 @@ public final class XmlToAvroUtils {
                     var orphanElementNode = elementNode.cloneNode(true);
                     mapPrimitive.put(xPathStringEvaluation(elementNode, orphanElementNode, keyXpath, namespaceContext), parseValue(valueSchema.getType(), xPathStringEvaluation(elementNode, orphanElementNode, valueXpath, namespaceContext)));
                 }
-                if(mapPrimitive.size() > 0) {
+                if (mapPrimitive.size() > 0) {
                     record.put(field.name(), mapPrimitive);
-                }
-                else{
+                } else {
                     // Set avro default value if it's different from null
                     if (field.hasDefaultValue() && field.defaultVal() != JsonProperties.NULL_VALUE) {
                         record.put(field.name(), field.defaultVal());
@@ -138,6 +130,7 @@ public final class XmlToAvroUtils {
                 record.put(field.name(), field.defaultVal());
             }
         }
+
     }
 
     private static void convertXMLArrayToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, String baseNamespace, Schema.Field field, Schema fieldType, String xpathSelector) throws ClassNotFoundException {

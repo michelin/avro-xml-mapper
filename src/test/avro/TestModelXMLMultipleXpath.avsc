@@ -19,36 +19,18 @@
     {"name": "quantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null, "customXpath1": "quantityField", "customXpath2": "quantityField"},
     {"name": "quantityFieldWithDefault", "type" : [{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4},"null"], "default": "\u0007\u00D0\u0000", "customXpath1": "quantityFieldWithDefault", "customXpath2": "altQuantityFieldWithDefault"},
     {"name": "dateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null, "customXpath1": "dateField", "customXpath2": "altWrapper/altDateField"},
-    {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "customXpath1": "dateFieldWithDefault", "customXpath2": "altWrapper/dateFieldWithDefault"},
-    {
-      "name": "stringMapLegacyScenario",
-      "xpathMap": "stringMapLegacyScenario",
-      "xpathKey": "key",
-      "xpathValue": "value",
-      "type": [ "null" , {
-        "type": "map",
-        "values": "string"
-      }],
-      "default": null
-    },
-    {
-      "name": "stringMapLegacyScenarioWithDefault",
-      "type": { 
-        "type": "map",
-        "values": "string"
-      },
-      "default": {}
-    },
+    {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "customXpath1": "dateFieldWithDefault", "customXpath2": "altWrapper[@wrapperAttribute='attrValue']/dateFieldWithDefault"},
     {
       "name": "stringMapScenario1",
       "customXpath1": {"rootXpath": "stringMapScenario1", "keyXpath": "key", "valueXpath": "value"},
-      "customXpath2": {"rootXpath": "stringMapScenario1", "keyXpath": "key", "valueXpath": "value"},
+      "customXpath2": {"rootXpath": "altStringMapScenario1", "keyXpath": "key", "valueXpath": "value"},
       "type": {"type": "map", "values": "string"},
       "default": {}
     },
     {
       "name": "stringMapScenario2",
       "customXpath1": {"rootXpath": "stringMapScenario2/entry", "keyXpath": "@key", "valueXpath": "."},
+      "customXpath2": {"rootXpath": "altStringMapScenario2/entry", "keyXpath": "@key", "valueXpath": "."},
       "type": {"type": "map", "values": "string"},
       "default": {}
     },
@@ -71,7 +53,7 @@
     {
       "name": "stringList",
       "customXpath1": "stringList/listItem",
-      "customXpath2": "stringList/listItem",
+      "customXpath2": "altStringList/listItem",
       "type": [ "null" , {"type": "array", "items": "string"}],
       "default": null
     },
@@ -84,16 +66,16 @@
     {
       "name": "recordListWithDefault",
       "customXpath1": "recordList/listItem",
-      "customXpath2": "recordList/listItem",
+      "customXpath2": "altRecordList/listItem",
       "type": {
         "type": "array",
         "items": {
           "type": "record",
           "name": "SubXMLTestModelMultipleXpath",
           "fields": [
-            {"name": "subStringField", "type" : ["null","string"], "default": null, "customXpath1": "subStringField", "customXpath2": "subStringField"},
-            {"name": "subIntField", "type" : ["null","int"], "default": null, "customXpath1": "subIntField"},
-            {"name": "subStringFieldFromAttribute", "type" : ["null","string"], "default": null, "customXpath1": "subIntField/@attribute", "customXpath2": "subIntField/@attribute"}
+            {"name": "subStringField", "type" : ["null","string"], "default": null, "customXpath1": "subStringField", "customXpath2": "altSubStringField"},
+            {"name": "subIntField", "type" : ["null","int"], "default": null, "customXpath1": "subIntField", "customXpath2": "altSubIntField"},
+            {"name": "subStringFieldFromAttribute", "type" : ["null","string"], "default": null, "customXpath1": "subIntField/@attribute", "customXpath2": "altSubIntField/@attribute"}
           ],
           "default": {}
         }

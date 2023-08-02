@@ -7,18 +7,13 @@
     <dateField>2025-12-25T00:00:00Z</dateField>
     <dateFieldWithDefault>1970-01-01T00:00:00Z</dateFieldWithDefault>
 
-    <stringMapLegacyScenario>
+    <stringMapScenario1>
         <key>key1</key>
         <value>value1</value>
-    </stringMapLegacyScenario>
-
+    </stringMapScenario1>
     <stringMapScenario1>
         <key>key2</key>
         <value>value2</value>
-    </stringMapScenario1>
-    <stringMapScenario1>
-        <key>key1</key>
-        <value>value1</value>
     </stringMapScenario1>
     <stringMapScenario1>
         <key>key3</key>
@@ -26,8 +21,8 @@
     </stringMapScenario1>
     
     <stringMapScenario2>
-        <entry key="key2">value2</entry>
         <entry key="key1">value1</entry>
+        <entry key="key2">value2</entry>
         <entry key="key3">value3</entry>
     </stringMapScenario2>
     

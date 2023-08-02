@@ -16,48 +16,20 @@
     {"name": "dateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null, "xpath": "dateField"},
     {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "xpath": "dateFieldWithDefault"},
     {
-      "name": "stringMapLegacyScenario",
-      "xpathMap": "stringMapLegacyScenario",
-      "xpathKey": "key",
-      "xpathValue": "value",
-      "type": [ "null" , {
-        "type": "map",
-        "values": "string"
-      }],
+      "name": "stringMapWithNullDefault",
+      "type": ["null", { "type": "map", "values": "string"}],
       "default": null
     },
     {
-      "name": "stringMapLegacyScenarioWithDefault",
-      "type": { 
-        "type": "map",
-        "values": "string"
-      },
-      "default": {}
-    },
-    {
       "name": "stringMapScenario1",
-      "xpath": {
-        "rootXpath": "stringMapScenario1",
-        "keyXpath": "key",
-        "valueXpath": "value"
-      },
-      "type": {
-        "type": "map",
-        "values": "string"
-      },
+      "xpath": { "rootXpath": "stringMapScenario1", "keyXpath": "key", "valueXpath": "value" },
+      "type": { "type": "map", "values": "string" },
       "default": {}
     },
     {
       "name": "stringMapScenario2",
-      "xpath": {
-        "rootXpath": "stringMapScenario2/entry",
-        "keyXpath": "@key",
-        "valueXpath": "."
-      },
-      "type": {
-        "type": "map",
-        "values": "string"
-      },
+      "xpath": { "rootXpath": "stringMapScenario2/entry", "keyXpath": "@key", "valueXpath": "." },
+      "type": { "type": "map", "values": "string" },
       "default": {}
     },
     {
@@ -79,19 +51,13 @@
     {
       "name": "stringList",
       "xpath": "stringList/listItem",
-      "type": [ "null" , {
-        "type": "array",
-        "items": "string"
-      }],
+      "type": [ "null" , { "type": "array", "items": "string" } ],
       "default": null
     },
     {
       "name": "stringListWithDefault",
       "xpath": "stringListWithDefault",
-      "type": {
-        "type": "array",
-        "items": "string"
-      },
+      "type": { "type": "array", "items": "string" },
       "default": []
     },
     {

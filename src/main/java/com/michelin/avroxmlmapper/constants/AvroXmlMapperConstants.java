@@ -5,10 +5,10 @@ public final class AvroXmlMapperConstants {
     public final static String XPATH_DEFAULT = "xpath";
     public final static String XML_NAMESPACE_SELECTOR_DEFAULT = "xmlNamespaces";
 
-    // DEFAULT map options (legacy, deprecated. Use key value separator in standard xpathSelector instead)
-    public final static String XPATHKEY_DEFAULT = "xpathKey";
-    public final static String XPATHMAP_DEFAULT = "xpathMap";
-    public final static String XPATHVALUE_DEFAULT = "xpathValue";
+    // default property names for map conversion
+    public final static String XPATH_MAP_ROOT_PROPERTY_NAME = "rootXpath";
+    public final static String XPATH_MAP_KEY_PROPERTY_NAME = "keyXpath";
+    public final static String XPATH_MAP_VALUE_PROPERTY_NAME = "valueXpath";
 
     public final static String DEFAULT_NAMESPACE = "null";
 

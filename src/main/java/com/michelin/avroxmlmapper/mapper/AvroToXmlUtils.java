@@ -151,12 +151,13 @@ public final class AvroToXmlUtils {
 
         // try to get the map xpath properties
         LinkedHashMap<String, String> mapXpathProperties = (LinkedHashMap<String, String>) field.getObjectProp(xpathSelector);
+        String rootXpath, keyXpath, valueXpath;
 
         if (mapXpathProperties != null) {
             // new scenarios
-            String rootXpath = mapXpathProperties.get("rootXpath");
-            String keyXpath = mapXpathProperties.get("keyXpath");
-            String valueXpath = mapXpathProperties.get("valueXpath");
+            rootXpath = mapXpathProperties.get(XPATH_MAP_ROOT_PROPERTY_NAME);
+            keyXpath = mapXpathProperties.get(XPATH_MAP_KEY_PROPERTY_NAME);
+            valueXpath = mapXpathProperties.get(XPATH_MAP_VALUE_PROPERTY_NAME);
 
             if (rootXpath != null && keyXpath != null && valueXpath != null) {
                 if (!keyXpath.contains("@")) {
