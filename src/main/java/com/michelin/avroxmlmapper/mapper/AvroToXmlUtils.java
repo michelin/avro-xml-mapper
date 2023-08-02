@@ -22,6 +22,9 @@ import java.util.*;
 import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.*;
 import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
 
+/**
+ * Utility class for Avro to XML conversion
+ */
 public final class AvroToXmlUtils {
 
     /**
@@ -333,12 +336,12 @@ public final class AvroToXmlUtils {
                     case BYTES -> {
                         if (value instanceof BigDecimal) {
                             int maxFractionDigit = 2;
-                            Optional<Schema> dateRecord = schema.getTypes()
+                            Optional<Schema> schemaOptional = schema.getTypes()
                                     .stream()
                                     .filter(type -> type.getType().equals(Schema.Type.BYTES))
                                     .findAny();
-                            if (dateRecord.isPresent()) {
-                                String scaleOut = dateRecord.get().getProp(SCALEOUT_PROPERTIES_KEY);
+                            if (schemaOptional.isPresent()) {
+                                String scaleOut = schemaOptional.get().getProp(SCALEOUT_PROPERTIES_KEY);
                                 if (!StringUtils.isEmpty(scaleOut)) {
                                     maxFractionDigit = Integer.parseInt(scaleOut);
                                 }

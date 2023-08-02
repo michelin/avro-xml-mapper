@@ -423,12 +423,13 @@ public final class XmlToAvroUtils {
 
     }
 
+
     /**
-     * Extracts
+     * <p>Recursively extracts all namespaces from the given node and its children.</p>
      *
-     * @param node
-     * @param oldNamespaces
-     * @return
+     * @param node          The node to extract namespaces from
+     * @param oldNamespaces The map of namespaces to update
+     * @return The updated map of namespaces
      */
     public static Map<String, List<String>> extractNamespaces(Node node, Map<String, List<String>> oldNamespaces) {
         asList(node.getChildNodes()).forEach(childNode -> extractNamespaces(childNode, oldNamespaces));

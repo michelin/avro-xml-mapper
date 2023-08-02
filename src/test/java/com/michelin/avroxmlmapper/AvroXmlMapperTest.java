@@ -10,24 +10,17 @@ import com.michelin.avroxmlmapper.utility.GenericUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.Test;
-import org.xml.sax.InputSource;
-import org.xmlunit.diff.Diff;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import static com.michelin.avroxmlmapper.utility.GenericUtils.stringToDocument;
-import static com.michelin.avroxmlmapper.utility.GenericUtils.xmlNamespaces;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AvroXmlMapperTest {
 
@@ -137,7 +130,7 @@ class AvroXmlMapperTest {
     void testAvroToXmlDocumentWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
         var inputModel = buildMultiXpathTestModel2();
 
-        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel,"customXpath2","xmlNamespacesCustom2");
+        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel, "customXpath2", "xmlNamespacesCustom2");
 
         var expectedStringUncleaned = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom2AndCustomXmlNamespaces.xml")), StandardCharsets.UTF_8);
         var expectedDocument = XMLUnit.getWhitespaceStrippedDocument(XMLUnit.buildControlDocument(expectedStringUncleaned));
@@ -156,9 +149,9 @@ class AvroXmlMapperTest {
         assertEquals("The default namespace uri provided in the avsc schema (\"http://namespace.uri/default\") is not defined in the XML document. Either fix your avsc schema to match the default namespace defined in the xml, or make sure that the xml document you are converting is not faulty.", e.getCause().getMessage());
     }
 
-    private TestModelXMLDefaultXpath buildDefaultXpathTestModel(){
+    private TestModelXMLDefaultXpath buildDefaultXpathTestModel() {
 
-        var mapResult = new HashMap<String,String>();
+        var mapResult = new HashMap<String, String>();
         mapResult.put("key1", "value1");
         mapResult.put("key2", "value2");
         mapResult.put("key3", "value3");
@@ -179,9 +172,9 @@ class AvroXmlMapperTest {
                 .build();
     }
 
-    private TestModelXMLMultipleXpath buildMultiXpathTestModel(){
+    private TestModelXMLMultipleXpath buildMultiXpathTestModel() {
 
-        var mapResult = new HashMap<String,String>();
+        var mapResult = new HashMap<String, String>();
         mapResult.put("key1", "value1");
         mapResult.put("key2", "value2");
         mapResult.put("key3", "value3");
@@ -202,9 +195,9 @@ class AvroXmlMapperTest {
                 .build();
     }
 
-    private TestModelXMLMultipleXpath buildMultiXpathTestModel2(){
+    private TestModelXMLMultipleXpath buildMultiXpathTestModel2() {
 
-        var mapResult = new HashMap<String,String>();
+        var mapResult = new HashMap<String, String>();
         mapResult.put("key1", "value1");
         mapResult.put("key2", "value2");
         mapResult.put("key3", "value3");

@@ -175,29 +175,16 @@
             <artifactId>avro</artifactId>
             <version>1.11.1</version>
             <exclusions>
-                <exclusion>  <!-- declare the exclusion here -->
+                <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <!-- todo remove this if its useless -->
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.12.2</version>
-        </dependency>
-        <dependency>
-            <!-- todo remove this if its useless -->
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <version>1.6</version>
-        </dependency>
-        <dependency>
-            <!-- todo remove this if its useless -->
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <version>2.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

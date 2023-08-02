@@ -31,11 +31,16 @@ import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.XML_NA
  */
 public final class GenericUtils {
 
-
-    public static long stringParseCount = 0;
-
+    /**
+     * Singleton instance of the XPath object
+     */
     private static XPath XPATH_STATIC;
 
+    /**
+     * Singleton constructor for the XPath object
+     *
+     * @return The singleton XPath instance
+     */
     public static XPath getXpath() {
         if (XPATH_STATIC == null) {
             XPATH_STATIC = XPathFactory.newInstance().newXPath();
@@ -155,10 +160,11 @@ public final class GenericUtils {
     /**
      * Handle exception for Node xPath evaluation
      *
-     * @param node             the source node to evaluate
-     * @param xPathExpression  the xPathExpression to match
-     * @param namespaceContext the namespace context
-     * @return the list of matched values
+     * @param node             The source node to evaluate
+     * @param orphanNode       The node to evaluate without parent nodes
+     * @param xPathExpression  The xPathExpression to match
+     * @param namespaceContext The namespace context
+     * @return The list of matched values
      */
     public static List<String> xPathStringListEvaluation(Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
         var nodeList = xPathNodeListEvaluation(node, orphanNode, xPathExpression, namespaceContext);
@@ -191,7 +197,6 @@ public final class GenericUtils {
         } catch (XPathExpressionException e) {
             throw new AvroXmlMapperException("Failed to execute xpath " + xPathExpression, e);
         }
-        stringParseCount++;
 
         return result != null && !result.isBlank() ? result : null;
     }
