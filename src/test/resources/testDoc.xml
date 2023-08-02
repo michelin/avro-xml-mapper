@@ -1,7 +1,0 @@
-<TestPayload xmlns="toto" xmlns:ns1="toto2">
-    <ns1:Date1>2020-03-05T13:53:25.459+01:00</ns1:Date1>
-    <ns1:Date2>2020-03-05+01:00</ns1:Date2>
-    <ns1:Date3>20200305135325-01:00</ns1:Date3>
-    <ns1:Date4>20200305</ns1:Date4>
-    <ns1:Date5>2020-03-05T13:53:25</ns1:Date5>
-</TestPayload>

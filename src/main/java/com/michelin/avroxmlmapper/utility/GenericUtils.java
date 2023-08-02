@@ -1,8 +1,8 @@
 package com.michelin.avroxmlmapper.utility;
 
-import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
+import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
 import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
-import com.michelin.avroxmlmapper.mapper.XMLToAvroUtils;
+import com.michelin.avroxmlmapper.mapper.XmlToAvroUtils;
 import org.apache.avro.Schema;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -24,13 +24,23 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.XML_NAMESPACE_SELECTOR_DEFAULT;
+
+/**
+ * Generic utility class for conversions.
+ */
 public final class GenericUtils {
 
-
-    public static long stringParseCount = 0;
-
+    /**
+     * Singleton instance of the XPath object
+     */
     private static XPath XPATH_STATIC;
 
+    /**
+     * Singleton constructor for the XPath object
+     *
+     * @return The singleton XPath instance
+     */
     public static XPath getXpath() {
         if (XPATH_STATIC == null) {
             XPATH_STATIC = XPathFactory.newInstance().newXPath();
@@ -51,14 +61,14 @@ public final class GenericUtils {
     }
 
     /**
-     * Get the XML namespaces from a given XML schema
+     * Get the default XML namespaces from a given XML schema ("xmlNamespaces" root attribute)
      *
      * @param schema The current XML schema
      * @return A map containing the namespaces
      */
     @SuppressWarnings("unchecked")
     public static Map<String, String> xmlNamespaces(Schema schema) {
-        return (Map<String, String>) schema.getObjectProp("xmlNamespaces");
+        return (Map<String, String>) schema.getObjectProp(XML_NAMESPACE_SELECTOR_DEFAULT);
     }
 
     /**
@@ -66,7 +76,7 @@ public final class GenericUtils {
      *
      * @param document the document to convert
      * @return the result string
-     * @throws TransformerException
+     * @throws TransformerException if the conversion fails
      */
     public static String documentToString(Document document) throws TransformerException {
         StringWriter writer = new StringWriter();
@@ -98,9 +108,16 @@ public final class GenericUtils {
             }
 
             // build a reverse map of namespaces : URI (K) -> list of prefixes (V)
-            var mapOldNamespaces = XMLToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
-            XMLToAvroUtils.purgeNamespaces(document.getDocumentElement());
-            XMLToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, mapOldNamespaces);
+            var namespacePrefixesByURI = XmlToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
+
+            // Remove all namespace definitions
+            XmlToAvroUtils.purgeNamespaces(document.getDocumentElement());
+
+            // Unify all namespaces by keeping only the ones defined in the xmlNamespacesMap.
+            // For instance, if the namespacePrefixesByURI map contains {"http://www.openapplications.org/oagis/9", ["ns2", "ns9"]}
+            // And the xmlNamespacesMap contains {"ns2", "http://www.openapplications.org/oagis/9"}
+            // Then the only namespace left will be "ns2" and the prefix "ns9" will be removed.
+            XmlToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, namespacePrefixesByURI);
 
             return document;
 
@@ -143,10 +160,11 @@ public final class GenericUtils {
     /**
      * Handle exception for Node xPath evaluation
      *
-     * @param node             the source node to evaluate
-     * @param xPathExpression  the xPathExpression to match
-     * @param namespaceContext the namespace context
-     * @return the list of matched values
+     * @param node             The source node to evaluate
+     * @param orphanNode       The node to evaluate without parent nodes
+     * @param xPathExpression  The xPathExpression to match
+     * @param namespaceContext The namespace context
+     * @return The list of matched values
      */
     public static List<String> xPathStringListEvaluation(Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
         var nodeList = xPathNodeListEvaluation(node, orphanNode, xPathExpression, namespaceContext);
@@ -179,7 +197,6 @@ public final class GenericUtils {
         } catch (XPathExpressionException e) {
             throw new AvroXmlMapperException("Failed to execute xpath " + xPathExpression, e);
         }
-        stringParseCount++;
 
         return result != null && !result.isBlank() ? result : null;
     }
@@ -197,11 +214,11 @@ public final class GenericUtils {
         for (int i = 0; i < mapAttributes.getLength(); i++) {
             Attr attr = (Attr) mapAttributes.item(i);
             String attrName = attr.getNodeName();
-            if (attrName.startsWith(XMLUtilsConstants.XMLNS + ":") || attrName.equals(XMLUtilsConstants.XMLNS)) {
-                if (attrName.equals(XMLUtilsConstants.XMLNS))
-                    mapPrefixes.put(XMLUtilsConstants.NO_PREFIX_NS, attr.getValue());
+            if (attrName.startsWith(AvroXmlMapperConstants.XMLNS + ":") || attrName.equals(AvroXmlMapperConstants.XMLNS)) {
+                if (attrName.equals(AvroXmlMapperConstants.XMLNS))
+                    mapPrefixes.put(AvroXmlMapperConstants.NO_PREFIX_NS, attr.getValue());
                 else
-                    mapPrefixes.put(attr.getNodeName().replace(XMLUtilsConstants.XMLNS + ":", ""), attr.getValue());
+                    mapPrefixes.put(attr.getNodeName().replace(AvroXmlMapperConstants.XMLNS + ":", ""), attr.getValue());
             }
         }
 

@@ -1,6 +1,6 @@
 package com.michelin.avroxmlmapper.mapper;
 
-import com.michelin.avroxmlmapper.constants.XMLUtilsConstants;
+import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
 import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
 import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
@@ -19,10 +19,13 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
+import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.*;
 import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
-import static com.michelin.avroxmlmapper.constants.XMLUtilsConstants.*;
 
-public final class AvroToXMLUtils {
+/**
+ * Utility class for Avro to XML conversion
+ */
+public final class AvroToXmlUtils {
 
     /**
      * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
@@ -32,7 +35,7 @@ public final class AvroToXMLUtils {
      * @param namespaceSelector Name of the variable defining xml namespaces of avsc file corresponding to record
      * @return the document produced
      */
-    public static Document createDocumentfromAvro(SpecificRecordBase record, String xpathSelector, Optional<String> namespaceSelector) {
+    public static Document createDocumentfromAvro(SpecificRecordBase record, String xpathSelector, String namespaceSelector) {
         Document document;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -40,17 +43,17 @@ public final class AvroToXMLUtils {
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.newDocument();
             Map<String, String> mapNamespaces;
-            if (namespaceSelector.isPresent()) {
-                mapNamespaces = xmlNamespaces(record.getSchema(), namespaceSelector.get());
-                mapNamespaces.put("", mapNamespaces.get("null"));
-                mapNamespaces.remove("null");
+            if (namespaceSelector != null) {
+                mapNamespaces = xmlNamespaces(record.getSchema(), namespaceSelector);
+                mapNamespaces.put("", mapNamespaces.get(DEFAULT_NAMESPACE));
+                mapNamespaces.remove(DEFAULT_NAMESPACE);
             } else {
                 mapNamespaces = Collections.emptyMap();
             }
             String rootElementName = record.getSchema().getProp(xpathSelector).substring(1);// the first character, for the xpath of rootElement,// is '/'
-            var rootElement = document.createElementNS(mapNamespaces.get(AvroToXMLUtils.getPrefix(rootElementName)), rootElementName);
-            mapNamespaces.forEach((k, v) -> rootElement.setAttribute(k.isEmpty() ? XMLUtilsConstants.XMLNS : XMLUtilsConstants.XMLNS + ":" + k, v));
-            AvroToXMLUtils.buildChildNodes(record, document, mapNamespaces, xpathSelector).forEach(n -> {
+            var rootElement = document.createElementNS(mapNamespaces.get(AvroToXmlUtils.getPrefix(rootElementName)), rootElementName);
+            mapNamespaces.forEach((k, v) -> rootElement.setAttribute(k.isEmpty() ? AvroXmlMapperConstants.XMLNS : AvroXmlMapperConstants.XMLNS + ":" + k, v));
+            AvroToXmlUtils.buildChildNodes(record, document, mapNamespaces, xpathSelector).forEach(n -> {
                 if (n.getNodeType() == Node.ATTRIBUTE_NODE) rootElement.setAttributeNode((Attr) n);
                 else rootElement.appendChild(n);
             });
@@ -139,7 +142,7 @@ public final class AvroToXMLUtils {
             }
         }
 
-        childNodes.forEach(AvroToXMLUtils::removeSpecialAttributes);
+        childNodes.forEach(AvroToXmlUtils::removeSpecialAttributes);
         return childNodes;
 
     }
@@ -151,12 +154,13 @@ public final class AvroToXMLUtils {
 
         // try to get the map xpath properties
         LinkedHashMap<String, String> mapXpathProperties = (LinkedHashMap<String, String>) field.getObjectProp(xpathSelector);
+        String rootXpath, keyXpath, valueXpath;
 
         if (mapXpathProperties != null) {
             // new scenarios
-            String rootXpath = mapXpathProperties.get("rootXpath");
-            String keyXpath = mapXpathProperties.get("keyXpath");
-            String valueXpath = mapXpathProperties.get("valueXpath");
+            rootXpath = mapXpathProperties.get(XPATH_MAP_ROOT_PROPERTY_NAME);
+            keyXpath = mapXpathProperties.get(XPATH_MAP_KEY_PROPERTY_NAME);
+            valueXpath = mapXpathProperties.get(XPATH_MAP_VALUE_PROPERTY_NAME);
 
             if (rootXpath != null && keyXpath != null && valueXpath != null) {
                 if (!keyXpath.contains("@")) {
@@ -329,15 +333,15 @@ public final class AvroToXMLUtils {
         } else {
             try {
                 switch (fieldType) {
-                    case BYTES:
+                    case BYTES -> {
                         if (value instanceof BigDecimal) {
                             int maxFractionDigit = 2;
-                            Optional<Schema> dateRecord = schema.getTypes()
+                            Optional<Schema> schemaOptional = schema.getTypes()
                                     .stream()
                                     .filter(type -> type.getType().equals(Schema.Type.BYTES))
                                     .findAny();
-                            if (dateRecord.isPresent()) {
-                                String scaleOut = dateRecord.get().getProp(SCALEOUT_PROPERTIES_KEY);
+                            if (schemaOptional.isPresent()) {
+                                String scaleOut = schemaOptional.get().getProp(SCALEOUT_PROPERTIES_KEY);
                                 if (!StringUtils.isEmpty(scaleOut)) {
                                     maxFractionDigit = Integer.parseInt(scaleOut);
                                 }
@@ -358,12 +362,9 @@ public final class AvroToXMLUtils {
                         } else {
                             result = value.toString();
                         }
-                        break;
-                    case STRING:
-                    case INT:
-                    case LONG:
+                    }
+                    case STRING, INT, LONG -> {
                         result = value.toString();
-
                         if (value instanceof Instant) {
                             Optional<Schema> dateRecord = schema.getTypes()
                                     .stream()
@@ -386,13 +387,9 @@ public final class AvroToXMLUtils {
                                 }
                             }
                         }
-
-                        break;
-                    case BOOLEAN:
-                        result = value.toString().toLowerCase();
-                        break;
-                    case DOUBLE:
-                    case FLOAT:
+                    }
+                    case BOOLEAN -> result = value.toString().toLowerCase();
+                    case DOUBLE, FLOAT -> {
                         // it is not very elegant, but the most common case is an integer value, in this case the value must appear as integer (not xx.0)
                         // it is possible that some applications do not support float value
                         int indexOfDecimal = value.toString().indexOf(".");
@@ -401,9 +398,8 @@ public final class AvroToXMLUtils {
                         } else {
                             result = value.toString();
                         }
-                        break;
-                    default:
-                        result = null;
+                    }
+                    default -> result = null;
                 }
             } catch (Exception e) {
                 result = null;
@@ -421,7 +417,7 @@ public final class AvroToXMLUtils {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             ((Element) node).removeAttribute(XML_ATTRIBUTE_POSITION);
         }
-        asList(node.getChildNodes()).forEach(AvroToXMLUtils::removeSpecialAttributes);
+        asList(node.getChildNodes()).forEach(AvroToXmlUtils::removeSpecialAttributes);
     }
 
     /**
@@ -515,7 +511,7 @@ public final class AvroToXMLUtils {
      * @param qualifiedName the element name, including the prefix
      * @return the prefix or an empty string in no prefix is present
      */
-    protected static String getPrefix(String qualifiedName) {
+    private static String getPrefix(String qualifiedName) {
         String[] parts = qualifiedName.split(":");
         if (parts.length == 1) { // no prefix
             return "";

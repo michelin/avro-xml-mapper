@@ -2,14 +2,11 @@ package com.michelin.avroxmlmapper;
 
 import com.michelin.avroxmlmapper.utility.XPathFormatter;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class XPathFormatterTest {
 
-    private static final Logger log = LoggerFactory.getLogger(XPathFormatterTest.class);
 
     @Test
     void testConvertionXpathWithMultipleAttributeTest() throws Exception {

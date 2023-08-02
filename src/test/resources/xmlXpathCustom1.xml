@@ -1,0 +1,47 @@
+<root
+        xmlns="http://namespace.uri/default"
+        xmlns:ns1="http://namespace.uri/1">
+    <ns1:stringField>lorem ipsum</ns1:stringField>
+    <stringFieldWithDefault>defaultString</stringFieldWithDefault>
+    <booleanField>true</booleanField>
+    <quantityField>52</quantityField>
+    <quantityFieldWithDefault>51.2</quantityFieldWithDefault>
+    <dateField>2025-12-25T00:00:00Z</dateField>
+    <dateFieldWithDefault>1970-01-01T00:00:00Z</dateFieldWithDefault>
+    <stringMapScenario1>
+        <key>key1</key>
+        <value>value1</value>
+    </stringMapScenario1>
+    <stringMapScenario1>
+        <key>key2</key>
+        <value>value2</value>
+    </stringMapScenario1>
+    <stringMapScenario1>
+        <key>key3</key>
+        <value>value3</value>
+    </stringMapScenario1>
+    <stringMapScenario2>
+        <entry key="key1">value1</entry>
+        <entry key="key2">value2</entry>
+        <entry key="key3">value3</entry>
+    </stringMapScenario2>
+    <stringList>
+        <listItem>item1</listItem>
+        <listItem>item2</listItem>
+        <listItem>item3</listItem>
+    </stringList>
+    <recordList>
+        <listItem>
+            <subStringField>item1</subStringField>
+            <subIntField attribute="attribute1">1</subIntField>
+        </listItem>
+        <listItem>
+            <subStringField>item2</subStringField>
+            <subIntField attribute="attribute2">2</subIntField>
+        </listItem>
+        <listItem>
+            <subStringField>item3</subStringField>
+            <subIntField attribute="attribute3">3</subIntField>
+        </listItem>
+    </recordList>
+</root>

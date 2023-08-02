@@ -1,0 +1,82 @@
+{
+  "namespace": "com.michelin.avro",
+  "xmlNamespaces": {
+    "null":"http://namespace.uri/default",
+    "ns2":"http://namespace.uri/2"
+  },
+  "xpath" : "/root",
+  "type": "record",
+  "name": "TestModelXMLDefaultXpath",
+  "fields": [
+    {"name": "stringField", "type" : ["null","string"], "default": null, "xpath": "ns2:stringField"},
+    {"name": "stringFieldWithDefault", "type" : ["string","null"], "default": "defaultString", "xpath": "stringFieldWithDefault"},
+    {"name": "booleanField","type" : "boolean", "default": false, "xpath": "booleanField"},
+    {"name": "quantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null, "xpath": "quantityField"},
+    {"name": "quantityFieldWithDefault", "type" : [{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4},"null"], "default": "\u0007\u00D0\u0000", "xpath": "quantityFieldWithDefault"},
+    {"name": "dateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null, "xpath": "dateField"},
+    {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "xpath": "dateFieldWithDefault"},
+    {
+      "name": "stringMapWithNullDefault",
+      "type": ["null", { "type": "map", "values": "string"}],
+      "default": null
+    },
+    {
+      "name": "stringMapScenario1",
+      "xpath": { "rootXpath": "stringMapScenario1", "keyXpath": "key", "valueXpath": "value" },
+      "type": { "type": "map", "values": "string" },
+      "default": {}
+    },
+    {
+      "name": "stringMapScenario2",
+      "xpath": { "rootXpath": "stringMapScenario2/entry", "keyXpath": "@key", "valueXpath": "." },
+      "type": { "type": "map", "values": "string" },
+      "default": {}
+    },
+    {
+      "name": "recordMapWithDefault",
+      "type": {
+        "type": "map",
+        "xpath": "recordMapWithDefault",
+        "values": {
+          "type": "record",
+          "name": "MapElement",
+          "fields": [
+            {"name": "mapDateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null},
+            {"name": "mapQuantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null}
+          ]
+        }
+      },
+      "default": {}
+    },
+    {
+      "name": "stringList",
+      "xpath": "stringList/listItem",
+      "type": [ "null" , { "type": "array", "items": "string" } ],
+      "default": null
+    },
+    {
+      "name": "stringListWithDefault",
+      "xpath": "stringListWithDefault",
+      "type": { "type": "array", "items": "string" },
+      "default": []
+    },
+    {
+      "name": "recordListWithDefault",
+      "xpath": "recordList/listItem",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "SubXMLTestModel",
+          "fields": [
+            {"name": "subStringField", "type" : ["null","string"], "default": null, "xpath": "subStringField"},
+            {"name": "subIntField", "type" : ["null","int"], "default": null, "xpath": "subIntField"},
+            {"name": "subStringFieldFromAttribute", "type" : ["null","string"], "default": null, "xpath": "subIntField/@attribute"}
+          ],
+          "default": {}
+        }
+      },
+      "default": []
+    }
+  ]
+}
