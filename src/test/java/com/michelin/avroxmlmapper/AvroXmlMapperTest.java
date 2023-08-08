@@ -2,6 +2,7 @@ package com.michelin.avroxmlmapper;
 
 import com.michelin.avro.SubXMLTestModel;
 import com.michelin.avro.SubXMLTestModelMultipleXpath;
+import com.michelin.avro.TestModelEmptyNamespace;
 import com.michelin.avro.TestModelXMLDefaultXpath;
 import com.michelin.avro.TestModelXMLMultipleXpath;
 import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
@@ -147,6 +148,22 @@ class AvroXmlMapperTest {
 
         assertEquals("Failed to parse XML", e.getMessage());
         assertEquals("The default namespace uri provided in the avsc schema (\"http://namespace.uri/default\") is not defined in the XML document. Either fix your avsc schema to match the default namespace defined in the xml, or make sure that the xml document you are converting is not faulty.", e.getCause().getMessage());
+    }
+
+    @Test
+    void testEmptyDefaultNamespaceXmlToAvro() throws Exception {
+        var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithoutDefaultNamespace.xml")), StandardCharsets.UTF_8);
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelEmptyNamespace.class, "specificXpath", "specificXmlNamespaces");
+
+        assertEquals(TestModelEmptyNamespace.newBuilder().setStringField("Hello").setThirdStringField("World").build(), result);
+    }
+
+    @Test
+    void testEmptyNamespaceXmlToAvro() throws Exception {
+        var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithoutNamespace.xml")), StandardCharsets.UTF_8);
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelEmptyNamespace.class);
+
+        assertEquals(TestModelEmptyNamespace.newBuilder().setStringField("Hello").setOtherStringField("Hello").setThirdStringField("World").build(), result);
     }
 
     private TestModelXMLDefaultXpath buildDefaultXpathTestModel() {

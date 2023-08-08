@@ -7,7 +7,7 @@
     <groupId>com.michelin</groupId>
     <artifactId>avro-xml-mapper</artifactId>
     <name>avro-xml-mapper</name>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>avro-xml-mapper is a library used for simplifying conversions from xml to avro and vice versa using xpath annotations</description>
     <url>https://github.com/michelin/avro-xml-mapper</url>

@@ -299,3 +299,6 @@ Conversion can be finalized using **GenericUtils.documentToString** method.
 
 [example needed]
 
+# Changelog
+0.1.0-SNAPSHOT : First coherent snapshot
+0.1.1-SNAPSHOT : Add support for non-provided xmlns

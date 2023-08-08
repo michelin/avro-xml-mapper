@@ -1,0 +1,14 @@
+{
+  "namespace": "com.michelin.avro",
+  "specificXmlNamespaces": {
+    "ns2":"http://namespace.uri/2"
+  },
+  "xpath" : "/root",
+  "type": "record",
+  "name": "TestModelEmptyNamespace",
+  "fields": [
+    {"name": "stringField", "type" : ["null","string"], "default": null, "xpath": "stringField", "specificXpath": "ns2:stringField"},
+    {"name": "otherStringField", "type" : ["null","string"], "default": null, "xpath": "otherStringField", "specificXpath": "otherStringField"},
+    {"name": "thirdStringField", "type" : ["null","string"], "default": null, "xpath": "deeperLevel/thirdStringField", "specificXpath": "deeperLevel/thirdStringField"}
+  ]
+}

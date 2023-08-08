@@ -1,0 +1,7 @@
+<root>
+    <otherStringField>Hello</otherStringField>
+    <stringField>Hello</stringField>
+    <deeperLevel>
+        <thirdStringField>World</thirdStringField>
+    </deeperLevel>
+</root>

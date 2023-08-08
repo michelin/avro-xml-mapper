@@ -4,7 +4,13 @@ import com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants;
 import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
 import com.michelin.avroxmlmapper.mapper.XmlToAvroUtils;
 import org.apache.avro.Schema;
-import org.w3c.dom.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.NamespaceContext;
@@ -21,7 +27,13 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.AbstractList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.RandomAccess;
 import java.util.stream.Collectors;
 
 import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.XML_NAMESPACE_SELECTOR_DEFAULT;
@@ -30,6 +42,9 @@ import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.XML_NA
  * Generic utility class for conversions.
  */
 public final class GenericUtils {
+
+    // Logger instance
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericUtils.class);
 
     /**
      * Singleton instance of the XPath object
@@ -97,15 +112,29 @@ public final class GenericUtils {
     public static Document stringToDocument(String strValue, Map<String, String> xmlNamespacesMap) {
         Document document;
         try {
+            // If no xmlNamespacesMap is provided, log a warning and initialize it
+            if (xmlNamespacesMap == null) {
+                xmlNamespacesMap = new HashMap<>();
+                GenericUtils.LOGGER.warn("No xmlNamespaces attribute provided in the avsc!");
+            }
+
+            // If no default namespace is present in the document, emulate one
+            if (xmlNamespacesMap.get("null") == null) {
+                // log a warning mentioning that no default xml namespace has been defined in the avsc, which could be normal if no xml namespace is used / defined in the xml
+                GenericUtils.LOGGER.warn("No default xml namespace has been defined in the avsc, which could be normal if no xmlns is used / defined in the xml but could also be a mistake from the user");
+
+                // Add a stub default namespace to the document root element to avoid NPE when evaluating xPath expressions and add it to the xmlNamespacesMap
+                strValue = addDefaultXMLNS(strValue);
+
+                xmlNamespacesMap.put("null", "http://www.example.com/defaultUri");
+            }
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(strValue));
             document = builder.parse(is);
 
-            if (xmlNamespacesMap == null) {
-                return document;
-            }
 
             // build a reverse map of namespaces : URI (K) -> list of prefixes (V)
             var namespacePrefixesByURI = XmlToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
@@ -124,6 +153,30 @@ public final class GenericUtils {
         } catch (Exception e) {
             throw new AvroXmlMapperException("Failed to parse XML", e);
         }
+    }
+
+    private static String addDefaultXMLNS(String xml) {
+        int rootStart, rootEnd;
+
+        int declarationIndex = xml.indexOf("?>");
+        if (declarationIndex == -1) {
+            rootStart = xml.indexOf("<");
+            rootEnd = xml.indexOf(">");
+        } else {
+            rootStart = xml.indexOf("<", declarationIndex + 2);
+            rootEnd = xml.indexOf(">", declarationIndex + 2);
+        }
+
+        if (rootStart != -1 && rootEnd != -1) {
+            String rootElement = xml.substring(rootStart, rootEnd + 1);
+
+            if (!rootElement.contains("xmlns=")) {
+                String modifiedRootElement = rootElement.replaceFirst(">", " xmlns=\"http://www.example.com/defaultUri\">");
+                xml = xml.substring(0, rootStart) + modifiedRootElement + xml.substring(rootEnd + 1);
+            }
+        }
+
+        return xml;
     }
 
     /**
