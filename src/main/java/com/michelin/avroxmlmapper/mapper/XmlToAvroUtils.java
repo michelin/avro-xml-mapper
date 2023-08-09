@@ -111,9 +111,17 @@ public final class XmlToAvroUtils {
                 Map<String, Object> mapPrimitive = new HashMap<>();
                 for (Node elementNode : asList(xPathNodeListEvaluation(fullNode, orphanNode, rootXpath, namespaceContext))) {
                     var orphanElementNode = elementNode.cloneNode(true);
-                    mapPrimitive.put(xPathStringEvaluation(elementNode, orphanElementNode, keyXpath, namespaceContext), parseValue(valueSchema.getType(), xPathStringEvaluation(elementNode, orphanElementNode, valueXpath, namespaceContext)));
+                    String key = xPathStringEvaluation(elementNode, orphanElementNode, keyXpath, namespaceContext);
+
+                    // get the value to apply default if it isn't there
+                    var value = parseValue(valueSchema.getType(), xPathStringEvaluation(elementNode, orphanElementNode, valueXpath, namespaceContext));
+                    if(value == null){
+                        value = fieldType.getObjectProps().get("default");
+                    }
+
+                    mapPrimitive.put(key, value);
                 }
-                if (mapPrimitive.size() > 0) {
+                if (!mapPrimitive.isEmpty()) {
                     record.put(field.name(), mapPrimitive);
                 } else {
                     // Set avro default value if it's different from null
