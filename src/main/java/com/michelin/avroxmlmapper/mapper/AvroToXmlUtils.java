@@ -139,6 +139,13 @@ public final class AvroToXmlUtils {
                             node.appendChild(document.createTextNode(formatStringWithSchemaType(fieldType.getType(), record.get(field.name()), field.schema())));
                         });
                     }
+                    else{
+                        // if field value is not there, check for the "keepEmptyTag" attribute
+                        var keepEmptyTag = field.getObjectProp("keepEmptyTag");
+                        if(keepEmptyTag != null && (boolean)keepEmptyTag){
+                            xpathList.forEach(x -> createNode(x, childNodes, document, namespaces));
+                        }
+                    }
             }
         }
 

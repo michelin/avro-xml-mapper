@@ -9,6 +9,7 @@
   "name": "TestModelXMLDefaultXpath",
   "fields": [
     {"name": "stringField", "type" : ["null","string"], "default": null, "xpath": "ns2:stringField"},
+    {"name": "emptyTag", "type" : ["null","string"], "default": null, "xpath": "ns2:emptyTag", "keepEmptyTag": true},
     {"name": "stringFieldWithDefault", "type" : ["string","null"], "default": "defaultString", "xpath": "stringFieldWithDefault"},
     {"name": "booleanField","type" : "boolean", "default": false, "xpath": "booleanField"},
     {"name": "quantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null, "xpath": "quantityField"},

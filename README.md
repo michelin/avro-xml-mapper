@@ -291,7 +291,44 @@ The namespaces are used for root namespaces' definition.
 
 **Failing to provide xmlNamespaces for Avro➡️XML conversion means that no namespace should be used in the xpath attributes, as it would mean that the produced xml would be invalid.**
 
-## Custom implementations
+## keepEmptyTag
+The keepEmptyTag attribute can be used to signify that the tag needs to be kept in the Avro to XML conversion in case the original avro field is null:
+
+<table style="width:100%">
+<tr><th style="width:50%">avsc</th><th style="width:50%">XML</th></tr>
+<td>
+
+```avro schema
+{
+  "name": "Object",
+  "type": "record",
+  "namespace": "com.example",
+  "xpath": "/objectRoot",
+  "fields": [
+    {
+      "name": "emptyElement",
+      "xpath": "element",
+      "keepEmptyTag": true,
+      "type": ["null","string"],
+      "default": null
+    }
+  ]
+}
+```
+</td>
+<td>
+
+``` xml
+<objectRoot>
+    <element/>
+</objectRoot>
+```
+</td>
+
+</table>
+
+
+# Custom implementations
 
 Using the provided method **AvroToXmlMapper#convertAvroToXmlDocument** allows for custom implementations and editing of the document before it is converted to String.
 
@@ -302,3 +339,4 @@ Conversion can be finalized using **GenericUtils.documentToString** method.
 # Changelog
 0.1.0-SNAPSHOT : First coherent snapshot
 0.1.1-SNAPSHOT : Add support for non-provided xmlns
+0.1.2-SNAPSHOT : Add keepEmptyTag attribute

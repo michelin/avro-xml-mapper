@@ -1,5 +1,6 @@
 <root xmlns="http://namespace.uri/default" xmlns:ns2="http://namespace.uri/2">
     <ns2:stringField>lorem ipsum</ns2:stringField>
+    <ns2:emptyTag/>
     <stringFieldWithDefault>defaultString</stringFieldWithDefault>
     <booleanField>true</booleanField>
     <quantityField>52</quantityField>
