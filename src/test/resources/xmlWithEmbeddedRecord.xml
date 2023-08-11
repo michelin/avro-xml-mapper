@@ -1,0 +1,6 @@
+<root xmlns:ns2="http://namespace.uri/2">
+    <ns2:embeddedRecord>
+        <stringField>Hello</stringField>
+        <ns2:otherStringField>World</ns2:otherStringField>
+    </ns2:embeddedRecord>
+</root>

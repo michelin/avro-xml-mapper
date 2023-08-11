@@ -1,0 +1,24 @@
+[
+  {
+    "namespace": "com.michelin.avro",
+    "type": "record",
+    "name": "EmbeddedRecord",
+    "fields": [
+      {"name": "stringField", "type" : ["null","string"], "default": null, "xpath": "stringField"},
+      {"name": "otherStringField", "type" : ["null","string"], "default": null, "xpath": "ns2:otherStringField"},
+      {"name": "thirdStringField", "type" : ["null","string"], "default": null}
+    ]
+  },
+  {
+  "namespace": "com.michelin.avro",
+  "xmlNamespaces": {
+    "ns2":"http://namespace.uri/2"
+  },
+  "xpath" : "/root",
+  "type": "record",
+  "name": "TestModelParentRecord",
+  "fields": [
+    {"name": "embeddedRecord", "type" : ["null", "EmbeddedRecord"], "default": null, "xpath": "ns2:embeddedRecord"}
+  ]
+}
+]

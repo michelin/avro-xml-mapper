@@ -1,9 +1,11 @@
 package com.michelin.avroxmlmapper;
 
 import com.michelin.avro.AltListItem;
+import com.michelin.avro.EmbeddedRecord;
 import com.michelin.avro.SubXMLTestModel;
 import com.michelin.avro.SubXMLTestModelMultipleXpath;
 import com.michelin.avro.TestModelEmptyNamespace;
+import com.michelin.avro.TestModelParentRecord;
 import com.michelin.avro.TestModelXMLDefaultXpath;
 import com.michelin.avro.TestModelXMLMultipleXpath;
 import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
@@ -165,6 +167,30 @@ class AvroXmlMapperTest {
         var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelEmptyNamespace.class);
 
         assertEquals(TestModelEmptyNamespace.newBuilder().setStringField("Hello").setOtherStringField("Hello").setThirdStringField("World").build(), result);
+    }
+
+    @Test
+    void testEmbeddedRecordXMLToAvro() throws Exception{
+        TestModelParentRecord expectedModel = TestModelParentRecord.newBuilder()
+                .setEmbeddedRecord(EmbeddedRecord.newBuilder().setStringField("Hello").setOtherStringField("World").build())
+                .build();
+
+        var input = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithEmbeddedRecord.xml")), StandardCharsets.UTF_8);
+        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelParentRecord.class);
+
+        assertEquals(expectedModel, result);
+    }
+
+    @Test
+    void testEmbeddedRecordAvroToXML() throws Exception{
+        TestModelParentRecord inputModel = TestModelParentRecord.newBuilder()
+                .setEmbeddedRecord(EmbeddedRecord.newBuilder().setStringField("Hello").setOtherStringField("World").setThirdStringField("toto").build())
+                .build();
+
+        var expectedString = IOUtils.toString(Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithEmbeddedRecord.xml")), StandardCharsets.UTF_8);
+        var result = AvroXmlMapper.convertAvroToXmlDocument(inputModel);
+        var expectedDocument = XMLUnit.getWhitespaceStrippedDocument(XMLUnit.buildControlDocument(expectedString));
+        assertEquals(GenericUtils.documentToString(expectedDocument), GenericUtils.documentToString(result));
     }
 
     private TestModelXMLDefaultXpath buildDefaultXpathTestModel() {
