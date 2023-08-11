@@ -78,6 +78,23 @@
         }
       },
       "default": []
+    },
+    {
+      "name": "altList",
+      "xpath": "altListItem",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "AltListItem",
+          "fields": [
+            {"name": "listItemAttribute", "type" : ["null","string"], "default": null, "xpath": "@attribute"},
+            {"name": "listItemContent", "type" : ["null","string"], "default": null, "xpath": "."}
+          ],
+          "default": {}
+        }
+      },
+      "default": []
     }
   ]
 }

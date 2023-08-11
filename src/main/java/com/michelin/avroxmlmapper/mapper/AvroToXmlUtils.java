@@ -136,7 +136,13 @@ public final class AvroToXmlUtils {
                     if (!fieldValue.isEmpty()) {
                         xpathList.forEach(x -> {
                             Node node = createNode(x, childNodes, document, namespaces);
-                            node.appendChild(document.createTextNode(formatStringWithSchemaType(fieldType.getType(), record.get(field.name()), field.schema())));
+                            // If node created is already a text node, just set the text content
+                            if(node.getNodeType() != Node.TEXT_NODE) {
+                                node.appendChild(document.createTextNode(formatStringWithSchemaType(fieldType.getType(), record.get(field.name()), field.schema())));
+                            }
+                            else{
+                                node.setTextContent(formatStringWithSchemaType(fieldType.getType(), record.get(field.name()), field.schema()));
+                            }
                         });
                     }
                     else{
@@ -291,7 +297,11 @@ public final class AvroToXmlUtils {
             } else { // last level
                 if (xmlLevel.startsWith("@")) { // attribute
                     resultNode = document.createAttribute(xmlLevel.substring(1));
-                } else { // element
+                }
+                else if (".".equals(xmlLevel)){ // content
+                    resultNode = document.createTextNode("");
+                }
+                else { // element
                     resultNode = createElement(xmlLevel, document, namespaces);
                 }
                 if (parentNode == null) {

@@ -32,7 +32,7 @@
         <listItem>item2</listItem>
         <listItem>item3</listItem>
     </stringList>
-    
+
     <recordList>
         <listItem>
             <subStringField>item1</subStringField>
@@ -47,4 +47,8 @@
             <subIntField attribute="attribute3">3</subIntField>
         </listItem>
     </recordList>
+
+
+    <altListItem attribute="attrToto">toto</altListItem>
+    <altListItem attribute="attrTutu">tutu</altListItem>
 </root>

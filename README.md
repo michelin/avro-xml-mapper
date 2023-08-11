@@ -340,3 +340,4 @@ Conversion can be finalized using **GenericUtils.documentToString** method.
 0.1.0-SNAPSHOT : First coherent snapshot
 0.1.1-SNAPSHOT : Add support for non-provided xmlns
 0.1.2-SNAPSHOT : Add keepEmptyTag attribute
+0.1.3-SNAPSHOT : Handle "." syntax in lists

@@ -1,5 +1,6 @@
 package com.michelin.avroxmlmapper;
 
+import com.michelin.avro.AltListItem;
 import com.michelin.avro.SubXMLTestModel;
 import com.michelin.avro.SubXMLTestModelMultipleXpath;
 import com.michelin.avro.TestModelEmptyNamespace;
@@ -181,6 +182,7 @@ class AvroXmlMapperTest {
                 .setStringMapScenario1(mapResult)
                 .setStringMapScenario2(mapResult)
                 .setStringList(List.of("item1", "item2", "item3"))
+                .setAltList(List.of(AltListItem.newBuilder().setListItemAttribute("attrToto").setListItemContent("toto").build(),AltListItem.newBuilder().setListItemAttribute("attrTutu").setListItemContent("tutu").build()))
                 .setRecordListWithDefault(List.of(
                         SubXMLTestModel.newBuilder().setSubStringField("item1").setSubIntField(1).setSubStringFieldFromAttribute("attribute1").build(),
                         SubXMLTestModel.newBuilder().setSubStringField("item2").setSubIntField(2).setSubStringFieldFromAttribute("attribute2").build(),
