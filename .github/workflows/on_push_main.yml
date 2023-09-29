@@ -38,7 +38,7 @@ jobs:
         if: always()
         uses: mikepenz/action-junit-report@v3
         with:
-          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          report_paths: 'target/surefire-reports/TEST-*.xml'
 
       - name: Deploy
         if: endsWith(steps.build.outputs.current_version, '-SNAPSHOT')
