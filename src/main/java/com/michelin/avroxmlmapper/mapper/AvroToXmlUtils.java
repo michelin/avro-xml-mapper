@@ -259,7 +259,7 @@ public final class AvroToXmlUtils {
      * @param namespaces map containing all namespaces (K : prefix ; V : URI)
      * @return the node created
      */
-    private static Node createNode(String xpath, List<Node> nodeList, Document
+    public static Node createNode(String xpath, List<Node> nodeList, Document
             document, Map<String, String> namespaces) {
         Node resultNode = null;
         Node parentNode = null;
