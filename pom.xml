@@ -26,7 +26,7 @@
         <slf4j-api.version>2.0.7</slf4j-api.version>
         <xmlunit.version>1.6</xmlunit.version>
         <sonar.organization>michelin</sonar.organization>
-        <sonar.projectKey>michelin_michelin_avro-xml-mapper</sonar.projectKey>
+        <sonar.projectKey>michelin_avro-xml-mapper</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
