@@ -1,31 +1,63 @@
-This library is meant as a way to easily convert from XML to Avro and vice versa, using specific attributes in the avsc file
+# Avro XML Mapper
 
-Your avsc files become the only necessary reference for the functional mapping of your xml data to and from avro.
+[![GitHub Build](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/on_push_main.yml?branch=main&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/on_push_main.yml)
+[![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.michelin/avro-xml-mapper?server=https%3A%2F%2Fs01.oss.sonatype.org%2F&style=for-the-badge&logo=sonatype)](https://central.sonatype.com/search?q=com.michelin.avro-xml-mapper&sort=name)
+[![GitHub release](https://img.shields.io/github/v/release/michelin/avro-xml-mapper?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper/releases)
+[![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/michelin/avro-xml-mapper/latest?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper/commits/main)
+[![GitHub Stars](https://img.shields.io/github/stars/michelin/avro-xml-mapper?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper)
+[![GitHub Watch](https://img.shields.io/github/watchers/michelin/avro-xml-mapper?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?logo=apache&style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 
-# Usage
+Avro XML Mapper is a Java library that converts XML formatted data to Apache Avro and vice versa using specific attributes in the AVSC file.
 
+Your AVSC files become the only necessary reference for the functional mapping of your XML data to and from Apache Avro.
 
+## Table of Contents
 
+* [Dependency](#dependency)
+* [Usage](#usage)
+  * [XPath](#xpath)
+  * [Structure](#structure)
+    * [Single Element](#single-element)
+    * [List](#list)
+    * [Map](#map)
+  * [Logical Type](#logical-type)
+    * [Date](#date)
+    * [Big Decimal](#big-decimal)
+  * [XML Namespace](#xml-namespace)
+  * [Keywords](#keywords)
+    * [keepEmptyTag](#keepemptytag)
+  * [Custom Implementations](#custom-implementations)
+* [Contribution](#contribution)
 
-# Annotations
+## Dependency
 
-## xpath
+[![javadoc](https://javadoc.io/badge2/com.michelin/avro-xml-mapper/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/com.michelin/avro-xml-mapper)
 
-The **xpath** attribute is used to specify the path to the element in the XML file.
-
-
-### Simple elements
-
-<table style="width:100%">
-<tr><th style="width:50%">XML</th><th style="width:50%">avsc</th></tr>
-<td>
+The Avro XML Mapper dependency is compatible with Java 17 and 21.
 
 ```xml
-<objectRoot>
-    <element>content</element>
-</objectRoot>
+<dependency>
+    <groupId>com.michelin</groupId>
+    <artifactId>avro-xml-mapper</artifactId>
+    <version>${avro-xml-mapper.version}</version>
+</dependency>
 ```
-</td>
+
+## Usage
+
+### XPath
+
+The XPath attribute is used to specify the path of the element in the XML file.
+
+### Structure
+
+#### Single Element
+
+A single element is represented as follows:
+
+<table style="width:100%">
+<tr><th style="width:50%">AVSC</th><th style="width:50%">XML</th></tr>
 <td>
 
 ```avro schema
@@ -39,43 +71,24 @@ The **xpath** attribute is used to specify the path to the element in the XML fi
   ]
 }
 ```
-</table>
 
-#### Specifically handled logical-types
-##### Dates
-
-only the "timestamp-millis" long logical type is handled and has multiple accepted formats:
-- ISO8601 date-time
-- ISO8601 date
-- Flat date (yyyyMMddz) which gets the UTC 12:00:00.000 time to avoid timezone issues
-- FLat date-time (yyyyMMddHHmmssz) which gets the UTC timezone assigned
-- ISO8601 date-time without offset
-- ISO8601 date without offset
-- Flat date without offset (yyyyMMdd) which gets the UTC 12:00:00.000 time to avoid timezone issues
-- Flat date-time without offset (yyyyMMdd HHmmss) which gets the UTC timezone assigned
-- Flat date-time without offset and without timezone (yyyy-MM-dd HH:mm:ss) which gets the UTC timezone assigned
-- Flat date-time with offset (yyyy-MM-dd'T'HH:mm:ss'T'00:00)
-They are all converted to the "Instant" java type.
-
-##### BigDecimal
-
-Only the "decimal" byte logical type is handled. It is converted to a BigDecimal java type.
-
-### Lists
-
-Lists can be applied to any repeating element in the XML file. The xpath attribute should point to the repeating element.
-
-<table style="width:100%">
-<tr><th style="width:50%">XML</th><th style="width:50%">avsc</th></tr>
+</td>
 <td>
 
-``` xml
+```xml
 <objectRoot>
-    <child>content1</child>
-    <child>content2</child>
-</objectRoot> 
+    <element>content</element>
+</objectRoot>
 ```
-</td>
+
+</table>
+
+#### List
+
+Lists can be applied to any repeating element in the XML file. The XPath attribute should point to the repeating element.
+
+<table style="width:100%">
+<tr><th style="width:50%">AVSC</th><th style="width:50%">XML</th></tr>
 <td>
 
 ```avro schema
@@ -88,39 +101,29 @@ Lists can be applied to any repeating element in the XML file. The xpath attribu
     {
       "name": "stringList",
       "xpath": "child",
-      "type": {"type": "array", "items": "string" },
+      "type": {"type": "array", "items": "string"},
       "default": {}
     }
   ]
 }
 ```
-</table>
 
-They can also define complex types like such:
-
-<table style="width:100%">
-<tr><th style="width:50%">XML</th><th style="width:50%">avsc</th></tr>
+</td>
 <td>
 
-``` xml
+```xml
 <objectRoot>
-    <recordList>
-        <listItem>
-            <subStringField>item1</subStringField>
-            <subIntField attribute="attribute1">1</subIntField>
-        </listItem>
-        <listItem>
-            <subStringField>item2</subStringField>
-            <subIntField attribute="attribute2">2</subIntField>
-        </listItem>
-        <listItem>
-            <subStringField>item3</subStringField>
-            <subIntField attribute="attribute3">3</subIntField>
-        </listItem>
-    </recordList>
-</objectRoot>
+    <child>content1</child>
+    <child>content2</child>
+</objectRoot> 
 ```
-</td>
+
+</table>
+
+Complex types can also be defined as follows:
+
+<table style="width:100%">
+<tr><th style="width:50%">AVSC</th><th style="width:50%">XML</th></tr>
 <td>
 
 ```avro schema
@@ -151,24 +154,38 @@ They can also define complex types like such:
   ]
 }
 ```
+
+</td>
+<td>
+
+```xml
+<objectRoot>
+    <recordList>
+        <listItem>
+            <subStringField>item1</subStringField>
+            <subIntField attribute="attribute1">1</subIntField>
+        </listItem>
+        <listItem>
+            <subStringField>item2</subStringField>
+            <subIntField attribute="attribute2">2</subIntField>
+        </listItem>
+        <listItem>
+            <subStringField>item3</subStringField>
+            <subIntField attribute="attribute3">3</subIntField>
+        </listItem>
+    </recordList>
+</objectRoot>
+```
+
 </table>
 
-### Maps
+#### Map
 
 Maps have two accepted formats:
 - A list of elements with a key attribute
 
 <table style="width:100%">
-<tr><th style="width:50%">XML</th><th style="width:50%">avsc</th></tr>
-<td>
-
-``` xml
-<objectRoot>
-    <element key="key1">content1</element>
-    <element key="key2">content2</element>
-</objectRoot> 
-```
-</td>
+<tr><th style="width:50%">AVSC</th><th style="width:50%">XML</th></tr>
 <td>
 
 ```avro schema
@@ -187,27 +204,23 @@ Maps have two accepted formats:
   ]
 }
 ```
+
+</td>
+<td>
+
+```xml
+<objectRoot>
+    <element key="key1">content1</element>
+    <element key="key2">content2</element>
+</objectRoot> 
+```
+
 </table>
 
 - A list of nodes with a key element and a value element
 
 <table style="width:100%">
-<tr><th style="width:50%">XML</th><th style="width:50%">avsc</th></tr>
-<td>
-
-``` xml
-<objectRoot>
-    <element>
-        <key>key1</key>
-        <value>content1</value>
-    </element>
-    <element>
-        <key>key2</key>
-        <value>content2</value>
-    </element>
-</objectRoot>
-```
-</td>
+<tr><th style="width:50%">AVSC</th><th style="width:50%">XML</th></tr>
 <td>
 
 ```avro schema
@@ -226,20 +239,62 @@ Maps have two accepted formats:
   ]
 }
 ```
+
+</td>
+<td>
+
+```xml
+<objectRoot>
+    <element>
+        <key>key1</key>
+        <value>content1</value>
+    </element>
+    <element>
+        <key>key2</key>
+        <value>content2</value>
+    </element>
+</objectRoot>
+```
+
 </table>
 
-It can be noted that in both cases, the rootXpath attribute always point to the repeating element of the list.
+In both cases, the `rootXpath` attribute always points to the repeating element of the list.
 
-## xmlNamespaces
+### Logical Type
 
-The xmlNamespaces attribute defined at the root of the avsc file is used to specify the namespaces used in the XML file.
+#### Date
 
-**It should be noted that this attribute is used in different ways depending on the conversion direction as described in the following sections.**
+Only the `timestamp-millis` Long logical type is handled and has multiple accepted formats:
 
-### XML to Avro 
-The namespaces are used to "unify" the XML file. If multiple namespace definition refer to the same URI, only the one defined in the xmlNamespaces attribute will be kept during conversion.
+- ISO8601 date-time
+- ISO8601 date
+- Flat date (yyyyMMddz) which gets the UTC 12:00:00.000 time to avoid timezone issues
+- Flat date-time (yyyyMMddHHmmssz) which gets the UTC timezone assigned
+- ISO8601 date-time without offset
+- ISO8601 date without offset
+- Flat date without offset (yyyyMMdd) which gets the UTC 12:00:00.000 time to avoid timezone issues
+- Flat date-time without offset (yyyyMMdd HHmmss) which gets the UTC timezone assigned
+- Flat date-time without offset and without timezone (yyyy-MM-dd HH:mm:ss) which gets the UTC timezone assigned
+- Flat date-time with offset (yyyy-MM-dd'T'HH:mm:ss'T'00:00)
 
-For instance, with the given avsc and xml: 
+They are all converted to the `Instant` Java type.
+
+#### Big Decimal
+
+Only the `Decimal` byte logical type is handled. It is converted to a `BigDecimal` Java type.
+
+### XML Namespace
+
+The `xmlNamespaces` attribute defined at the root of the AVSC file is used to specify the namespaces used in the XML file.
+
+> It should be noted that this attribute is used in different ways depending on the conversion direction as described in the following sections.
+
+#### XML to Avro 
+
+The namespaces are used to unify the XML file. 
+If multiple namespace definitions refer to the same URI, only the one defined in the `xmlNamespaces` attribute will be kept during conversion.
+
+For instance, with the given AVSC and XML: 
 
 ```avro schema
 {
@@ -259,7 +314,6 @@ For instance, with the given avsc and xml:
 }
 ```
 
-
 ```xml 
 <objectRoot xmlns="http://namespace.uri/default"
             xmlns:ns1="http://namespace.uri/1">
@@ -268,7 +322,8 @@ For instance, with the given avsc and xml:
     <ns2:thirdElement xmlns:ns2="http://namespace.uri/1">third element content</ns2:thirdElement>
 </objectRoot>
 ```
-Before conversion to avro, the initial Document is tweaked as such:
+
+Before conversion to Avro, the initial document is tweaked as such:
 
 ```xml
 <noprefixns:objectRoot xmlns:noprefixns="http://namespace.uri/default"
@@ -279,23 +334,26 @@ Before conversion to avro, the initial Document is tweaked as such:
 </noprefixns:objectRoot>
 ```
 
-The root **xmlns** namespace is replaced with **xmlns:noprefixns** and the **ns1** is simply kept. 
+The root `xmlns` namespace is replaced with `xmlns:noprefixns` and the `ns1` is simply preserved.
 
-The **ns2** namespace is removed because it refers to the same URI as the **ns1** namespace.
+The `ns2` namespace is removed because it refers to the same URI as the `ns1` namespace.
 
+> Failing to provide `xmlNamespaces` for XML to Avro conversion simply means that namespaces in XPath have to be consistent.
 
-**Failing to provide xmlNamespaces for XML➡️Avro conversion simply means that namespaces in xpath have to be consistent.**
+#### Avro to XML
 
-### Avro to XML
-The namespaces are used for root namespaces' definition.
+The namespaces are used for root namespace definition.
 
-**Failing to provide xmlNamespaces for Avro➡️XML conversion means that no namespace should be used in the xpath attributes, as it would mean that the produced xml would be invalid.**
+> Failing to provide `xmlNamespaces` for Avro to XML conversion means that no namespace should be used in the XPath attributes, as it would mean that the produced XML would be invalid.
 
-## keepEmptyTag
-The keepEmptyTag attribute can be used to signify that the tag needs to be kept in the Avro to XML conversion in case the original avro field is null:
+## Keywords
+
+### keepEmptyTag
+
+The `keepEmptyTag` attribute can be used to signify that the tag needs to be kept in the Avro to XML conversion in case the original Avro field is null:
 
 <table style="width:100%">
-<tr><th style="width:50%">avsc</th><th style="width:50%">XML</th></tr>
+<tr><th style="width:50%">AVSC</th><th style="width:50%">XML</th></tr>
 <td>
 
 ```avro schema
@@ -315,29 +373,28 @@ The keepEmptyTag attribute can be used to signify that the tag needs to be kept 
   ]
 }
 ```
+
 </td>
+
 <td>
 
-``` xml
+```xml
 <objectRoot>
-    <element/>
+    <element />
 </objectRoot>
 ```
-</td>
 
+</td>
 </table>
 
+### Custom Implementations
 
-# Custom implementations
+Using the provided method `AvroToXmlMapper#convertAvroToXmlDocument` allows for custom implementations and editing of the document before it is converted to String.
 
-Using the provided method **AvroToXmlMapper#convertAvroToXmlDocument** allows for custom implementations and editing of the document before it is converted to String.
+Conversion can be finalized using `GenericUtils#documentToString` method.
 
-Conversion can be finalized using **GenericUtils.documentToString** method.
+## Contribution
 
-[example needed]
-
-# Changelog
-0.1.0-SNAPSHOT : First coherent snapshot
-0.1.1-SNAPSHOT : Add support for non-provided xmlns
-0.1.2-SNAPSHOT : Add keepEmptyTag attribute
-0.1.3-SNAPSHOT : Handle "." syntax in lists
+We welcome contributions from the community! Before you get started, please take a look at
+our [contribution guide](https://github.com/michelin/avro-xml-mapper/blob/master/CONTRIBUTING.md) to learn about our
+guidelines and best practices. We appreciate your help in making Kstreamplify a better library for everyone.
