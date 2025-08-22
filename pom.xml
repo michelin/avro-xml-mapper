@@ -53,6 +53,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <jacoco.version>0.8.13</jacoco.version>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
+        <lombok.version>1.18.38</lombok.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
@@ -91,6 +92,13 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit-jupiter.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

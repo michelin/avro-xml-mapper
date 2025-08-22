@@ -25,19 +25,13 @@ import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
 import com.michelin.avroxmlmapper.mapper.XmlToAvroUtils;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.AbstractList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.RandomAccess;
-import java.util.stream.Collectors;
+import java.util.*;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -46,9 +40,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -57,24 +50,17 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /** Generic utility class for conversions. */
+@Slf4j
 public final class GenericUtils {
-
-    // Logger instance
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenericUtils.class);
-
-    /** Singleton instance of the XPath object */
-    private static XPath XPATH_STATIC;
+    private GenericUtils() {}
 
     /**
-     * Singleton constructor for the XPath object
+     * Get a new XPath instance.
      *
-     * @return The singleton XPath instance
+     * @return A new XPath instance
      */
     public static XPath getXpath() {
-        if (XPATH_STATIC == null) {
-            XPATH_STATIC = XPathFactory.newInstance().newXPath();
-        }
-        return XPATH_STATIC;
+        return XPathFactory.newInstance().newXPath();
     }
 
     /**
@@ -108,8 +94,13 @@ public final class GenericUtils {
      * @throws TransformerException if the conversion fails
      */
     public static String documentToString(Document document) throws TransformerException {
+        TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+
         StringWriter writer = new StringWriter();
-        var transformer = TransformerFactory.newInstance().newTransformer();
+        Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.INDENT, "no");
         transformer.transform(new DOMSource(document), new StreamResult(writer));
@@ -129,14 +120,14 @@ public final class GenericUtils {
             // If no xmlNamespacesMap is provided, log a warning and initialize it
             if (xmlNamespacesMap == null) {
                 xmlNamespacesMap = new HashMap<>();
-                GenericUtils.LOGGER.warn("No xmlNamespaces attribute provided in the avsc!");
+                log.warn("No xmlNamespaces attribute provided in the avsc!");
             }
 
             // If no default namespace is present in the document, emulate one
             if (xmlNamespacesMap.get("null") == null) {
                 // log a warning mentioning that no default xml namespace has been defined in the avsc, which could be
                 // normal if no xml namespace is used / defined in the xml
-                GenericUtils.LOGGER.warn(
+                log.warn(
                         "No default xml namespace has been defined in the avsc, which could be normal if no xmlns is used / defined in the xml but could also be a mistake from the user");
 
                 // Add a stub default namespace to the document root element to avoid NPE when evaluating xPath
@@ -163,9 +154,9 @@ public final class GenericUtils {
             XmlToAvroUtils.purgeNamespaces(document.getDocumentElement());
 
             // Unify all namespaces by keeping only the ones defined in the xmlNamespacesMap.
-            // For instance, if the namespacePrefixesByURI map contains {"http://www.openapplications.org/oagis/9",
-            // ["ns2", "ns9"]}
-            // And the xmlNamespacesMap contains {"ns2", "http://www.openapplications.org/oagis/9"}
+            // For instance, if the namespacePrefixesByURI map
+            // contains {"http://www.openapplications.org/oagis/9", ["ns2", "ns9"]},
+            // and the xmlNamespacesMap contains {"ns2", "http://www.openapplications.org/oagis/9"},
             // Then the only namespace left will be "ns2" and the prefix "ns9" will be removed.
             XmlToAvroUtils.simplifyNamespaces(document, xmlNamespacesMap, namespacePrefixesByURI);
 
@@ -177,7 +168,8 @@ public final class GenericUtils {
     }
 
     private static String addDefaultXMLNS(String xml) {
-        int rootStart, rootEnd;
+        int rootStart;
+        int rootEnd;
 
         int declarationIndex = xml.indexOf("?>");
         if (declarationIndex == -1) {
@@ -212,7 +204,7 @@ public final class GenericUtils {
      */
     public static NodeList xPathNodeListEvaluation(
             Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
-        NodeList result = null;
+        NodeList result;
 
         var nodeToParse = node;
 
@@ -247,7 +239,7 @@ public final class GenericUtils {
         return asList(nodeList).stream()
                 .map(Node::getTextContent)
                 .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -261,7 +253,7 @@ public final class GenericUtils {
      */
     public static String xPathStringEvaluation(
             Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
-        String result = null;
+        String result;
 
         var nodeToParse = node;
 
@@ -359,18 +351,17 @@ public final class GenericUtils {
 
     /**
      * Frequently the type is defined in avsc with this pattern : "type" : [ "null", "realType"] to allow a null value.
-     * This pattern creates a UNION type, with two sub-types. This method extracts the non-null type ("real type").
+     * This pattern creates a UNION type, with two subtypes. This method extracts the non-null type ("real type").
      *
-     * @param schema the schema node wich can be a UNION
-     * @return the non-null type
+     * @param schema the schema node which can be a UNION
+     * @return The non-null type
      */
-    public static Schema extractRealType(Schema schema) {
+    public static Optional<Schema> extractRealType(Schema schema) {
         return schema.getType() != Schema.Type.UNION
-                ? schema
+                ? Optional.of(schema)
                 : schema.getTypes().stream()
                         .filter(s -> s.getType() != Schema.Type.NULL)
-                        .findFirst()
-                        .get();
+                        .findFirst();
     }
 
     /** Custom class allowing the conversion of NodeList to iterable List of Node */

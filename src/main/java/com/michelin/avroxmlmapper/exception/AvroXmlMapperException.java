@@ -21,7 +21,7 @@ package com.michelin.avroxmlmapper.exception;
 /** Exception thrown when an error occurs during the mapping process. */
 public class AvroXmlMapperException extends RuntimeException {
     /**
-     * Default constructor
+     * Constructor.
      *
      * @param message The message
      * @param cause The cause
