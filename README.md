@@ -1,11 +1,11 @@
 # Avro XML Mapper
 
-[![GitHub Build](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/on_push_main.yml?branch=main&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/on_push_main.yml)
-[![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.michelin/avro-xml-mapper?server=https%3A%2F%2Fs01.oss.sonatype.org%2F&style=for-the-badge&logo=sonatype)](https://central.sonatype.com/search?q=com.michelin.avro-xml-mapper&sort=name)
-[![GitHub release](https://img.shields.io/github/v/release/michelin/avro-xml-mapper?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper/releases)
-[![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/michelin/avro-xml-mapper/latest?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper/commits/main)
+[![GitHub Build](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml?branch=main&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml)
+[![Maven Central](https://img.shields.io/nexus/r/com.michelin/avro-xml-mapper?server=https%3A%2F%2Fs01.oss.sonatype.org%2F&style=for-the-badge&logo=apache-maven&label=Maven%20Central)](https://central.sonatype.com/search?q=com.michelin.avro-xml-mapper&sort=name)
+![Supported Java Versions](https://img.shields.io/badge/Java-17--21-blue.svg?style=for-the-badge&logo=openjdk)
 [![GitHub Stars](https://img.shields.io/github/stars/michelin/avro-xml-mapper?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper)
-[![GitHub Watch](https://img.shields.io/github/watchers/michelin/avro-xml-mapper?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper)
+[![SonarCloud Coverage](https://img.shields.io/sonar/coverage/michelin_avro-xml-mapper?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge)](https://sonarcloud.io/component_measures?id=michelin_avro-xml-mapper&metric=coverage&view=list)
+[![SonarCloud Tests](https://img.shields.io/sonar/tests/michelin_avro-xml-mapper/main?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/component_measures?metric=tests&view=list&id=michelin_avro-xml-mapper)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?logo=apache&style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 
 Avro XML Mapper is a Java library that converts XML formatted data to Apache Avro and vice versa using specific attributes in the AVSC file.
