@@ -10,15 +10,15 @@
 [![SonarCloud Tests](https://img.shields.io/sonar/tests/michelin_avro-xml-mapper/main?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/component_measures?metric=tests&view=list&id=michelin_avro-xml-mapper)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?logo=apache&style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 
-Turn XML into Avro and vice versa.
+[Getting Started](#getting-started)
 
-Use attributes in Avro files as a single source of truth for effortless data mapping.
+Turn XML into Avro and vice versa.
 
 </div>
 
 ## Table of Contents
 
-* [Dependency](#dependency)
+* [Getting Started](#getting-started)
 * [Usage](#usage)
   * [XPath](#xpath)
   * [Structure](#structure)
@@ -34,11 +34,11 @@ Use attributes in Avro files as a single source of truth for effortless data map
   * [Custom Implementations](#custom-implementations)
 * [Contribution](#contribution)
 
-## Dependency
+## Getting Started
 
 [![javadoc](https://javadoc.io/badge2/com.michelin/avro-xml-mapper/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/com.michelin/avro-xml-mapper)
 
-The Avro XML Mapper dependency is compatible with Java 17 and 21.
+To get started, add the following dependency:
 
 ```xml
 <dependency>
