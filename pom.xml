@@ -7,7 +7,7 @@
     <version>0.1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>avro-xml-mapper</name>
-    <description>Avro-xml-mapper is a library that simplifies conversions between XML and Avro using XPath annotations.</description>
+    <description>Avro XML Mapper is a library that simplifies conversions between XML and Avro using XPath annotations.</description>
     <url>https://github.com/michelin/avro-xml-mapper</url>
 
     <licenses>
@@ -69,7 +69,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -99,6 +98,7 @@
             <artifactId>junit-jupiter</artifactId>
             <version>${junit-jupiter.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
