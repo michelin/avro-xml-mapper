@@ -43,17 +43,20 @@ import org.w3c.dom.*;
 /** Utility class for Avro to XML conversion */
 public final class AvroToXmlUtils {
 
+    private AvroToXmlUtils() {}
+
     /**
      * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
      *
-     * @param record the global SpecificRecordBase containing the entire data to parse in XML
+     * @param message the global SpecificRecordBase containing the entire data to parse in XML
      * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
      * @param namespaceSelector Name of the variable defining xml namespaces of avsc file corresponding to record
      * @return the document produced
      */
-    public static Document createDocumentfromAvro(
-            SpecificRecordBase record, String xpathSelector, String namespaceSelector) {
+    public static Document createDocumentFromAvro(
+            SpecificRecordBase message, String xpathSelector, String namespaceSelector) {
         Document document;
+
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -63,28 +66,35 @@ public final class AvroToXmlUtils {
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.newDocument();
             Map<String, String> mapNamespaces;
+
             if (namespaceSelector != null) {
-                mapNamespaces = xmlNamespaces(record.getSchema(), namespaceSelector);
+                mapNamespaces = xmlNamespaces(message.getSchema(), namespaceSelector);
                 mapNamespaces.put("", mapNamespaces.get(DEFAULT_NAMESPACE));
                 mapNamespaces.remove(DEFAULT_NAMESPACE);
             } else {
                 mapNamespaces = Collections.emptyMap();
             }
-            String rootElementName = record.getSchema()
+
+            String rootElementName = message.getSchema()
                     .getProp(xpathSelector)
-                    .substring(1); // the first character, for the xpath of rootElement,// is '/'
+                    .substring(1); // The first character, for the xpath of rootElement,// is '/'
+
             var rootElement = document.createElementNS(
                     mapNamespaces.get(AvroToXmlUtils.getPrefix(rootElementName)), rootElementName);
+
             mapNamespaces.forEach((k, v) -> rootElement.setAttribute(
                     k.isEmpty() ? AvroXmlMapperConstants.XMLNS : AvroXmlMapperConstants.XMLNS + ":" + k, v));
-            AvroToXmlUtils.buildChildNodes(record, document, mapNamespaces, xpathSelector)
+
+            AvroToXmlUtils.buildChildNodes(message, document, mapNamespaces, xpathSelector)
                     .forEach(n -> {
-                        if (n.getNodeType() == Node.ATTRIBUTE_NODE) rootElement.setAttributeNode((Attr) n);
-                        else rootElement.appendChild(n);
+                        if (n.getNodeType() == Node.ATTRIBUTE_NODE) {
+                            rootElement.setAttributeNode((Attr) n);
+                        } else {
+                            rootElement.appendChild(n);
+                        }
                     });
 
             document.appendChild(rootElement);
-
         } catch (Exception e) {
             throw new AvroXmlMapperException("Failed to create document from avro", e);
         }
@@ -95,27 +105,32 @@ public final class AvroToXmlUtils {
     /**
      * Build all child nodes of an element (with type record in avsc) and return it as list.
      *
-     * @param record the record corresponding to the parent element
+     * @param message the record corresponding to the parent element
      * @param document the target document (necessary to create nodes)
      * @param namespaces map containing all namespaces (K : prefix ; V : URI)
      * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
      * @return the list of all child nodes built
      */
     private static List<Node> buildChildNodes(
-            SpecificRecordBase record, Document document, Map<String, String> namespaces, String xpathSelector) {
+            SpecificRecordBase message, Document document, Map<String, String> namespaces, String xpathSelector) {
         List<Node> childNodes = new ArrayList<>();
-        for (Schema.Field field : record.getSchema().getFields()) {
-            Schema fieldType = extractRealType(field.schema());
+
+        for (Schema.Field field : message.getSchema().getFields()) {
+            Optional<Schema> fieldType = extractRealType(field.schema());
+
+            if (fieldType.isEmpty()) {
+                continue;
+            }
+
             String xpath;
-            switch (fieldType.getType()) {
-                case NULL:
-                case UNION:
-                case ENUM:
+            switch (fieldType.get().getType()) {
+                case NULL, UNION, ENUM:
                     break;
                 case RECORD:
                     xpath = field.getProp(xpathSelector);
+
                     if (xpath != null) {
-                        var subRecord = (SpecificRecordBase) record.get(field.name());
+                        var subRecord = (SpecificRecordBase) message.get(field.name());
                         if (subRecord != null) {
                             Node node = createNode(xpath, childNodes, document, namespaces);
                             buildChildNodes(subRecord, document, namespaces, xpathSelector)
@@ -128,12 +143,17 @@ public final class AvroToXmlUtils {
                     }
                     break;
                 case ARRAY:
-                    Schema elementSchema = fieldType.getElementType();
+                    Schema elementSchema = fieldType.get().getElementType();
                     xpath = field.getProp(xpathSelector);
+
                     if (xpath != null) {
-                        var list = (List) record.get(field.name());
+                        var list = (List) message.get(field.name());
+
                         if (list != null && !list.isEmpty()) {
-                            if (extractRealType(elementSchema).getType() == Schema.Type.RECORD) { // an array of records
+                            Optional<Schema> schema = extractRealType(elementSchema);
+
+                            if (schema.isPresent()
+                                    && schema.get().getType() == Schema.Type.RECORD) { // An array of records
                                 for (SpecificRecordBase item : (List<SpecificRecordBase>) list) {
                                     Node node = createNode(xpath, childNodes, document, namespaces);
                                     buildChildNodes(item, document, namespaces, xpathSelector)
@@ -143,8 +163,8 @@ public final class AvroToXmlUtils {
                                                 else node.appendChild(n);
                                             });
                                 }
-                            } else if (extractRealType(elementSchema).getType()
-                                    == Schema.Type.STRING) { // an array of string
+                            } else if (schema.isPresent()
+                                    && schema.get().getType() == Schema.Type.STRING) { // An array of string
                                 for (String item : (List<String>) list) {
                                     Node node = createNode(xpath, childNodes, document, namespaces);
                                     node.appendChild(document.createTextNode(item));
@@ -157,14 +177,15 @@ public final class AvroToXmlUtils {
                     }
                     break;
                 case MAP:
-                    buildMapChildNodes(record, document, childNodes, namespaces, field, fieldType, xpathSelector);
+                    buildMapChildNodes(
+                            message, document, childNodes, namespaces, field, fieldType.get(), xpathSelector);
                     break;
                 default:
                     // all other = primitive types
                     var xpathList = getXpathList(field, xpathSelector);
 
-                    String fieldValue = record.get(field.name()) != null
-                            ? record.get(field.name()).toString()
+                    String fieldValue = message.get(field.name()) != null
+                            ? message.get(field.name()).toString()
                             : "";
                     if (!fieldValue.isEmpty()) {
                         xpathList.forEach(x -> {
@@ -172,10 +193,10 @@ public final class AvroToXmlUtils {
                             // If node created is already a text node, just set the text content
                             if (node.getNodeType() != Node.TEXT_NODE) {
                                 node.appendChild(document.createTextNode(formatStringWithSchemaType(
-                                        fieldType.getType(), record.get(field.name()), field.schema())));
+                                        fieldType.get().getType(), message.get(field.name()), field.schema())));
                             } else {
                                 node.setTextContent(formatStringWithSchemaType(
-                                        fieldType.getType(), record.get(field.name()), field.schema()));
+                                        fieldType.get().getType(), message.get(field.name()), field.schema()));
                             }
                         });
                     } else {
@@ -193,21 +214,23 @@ public final class AvroToXmlUtils {
     }
 
     private static void buildMapChildNodes(
-            SpecificRecordBase record,
+            SpecificRecordBase message,
             Document document,
             List<Node> childNodes,
             Map<String, String> namespaces,
             Schema.Field field,
             Schema fieldType,
             String xpathSelector) {
-
-        // initialize value Schema
+        // Initialize value Schema
         Schema valueSchema = fieldType.getValueType();
 
-        // try to get the map xpath properties
+        // Try to get the map xpath properties
         LinkedHashMap<String, String> mapXpathProperties =
                 (LinkedHashMap<String, String>) field.getObjectProp(xpathSelector);
-        String rootXpath, keyXpath, valueXpath;
+
+        String rootXpath;
+        String keyXpath;
+        String valueXpath;
 
         if (mapXpathProperties != null) {
             // new scenarios
@@ -218,7 +241,7 @@ public final class AvroToXmlUtils {
             if (rootXpath != null && keyXpath != null && valueXpath != null) {
                 if (!keyXpath.contains("@")) {
                     buildMapChildNodesFromScenario1(
-                            record,
+                            message,
                             document,
                             childNodes,
                             namespaces,
@@ -229,7 +252,7 @@ public final class AvroToXmlUtils {
                             valueXpath);
                 } else {
                     buildMapChildNodesFromScenario2(
-                            record,
+                            message,
                             document,
                             childNodes,
                             namespaces,
@@ -250,7 +273,7 @@ public final class AvroToXmlUtils {
      * </mapMarkup>
      */
     private static void buildMapChildNodesFromScenario1(
-            SpecificRecordBase record,
+            SpecificRecordBase message,
             Document document,
             List<Node> childNodes,
             Map<String, String> namespaces,
@@ -260,7 +283,7 @@ public final class AvroToXmlUtils {
             String keyXpath,
             String valueXpath) {
         if (valueSchema.getType() == Schema.Type.STRING) {
-            var map = (Map<String, String>) record.get(field.name());
+            var map = (Map<String, String>) message.get(field.name());
             if (map != null) {
                 for (var keyValue : map.entrySet()) {
                     Node node = createNode(rootXpath, childNodes, document, namespaces);
@@ -287,7 +310,7 @@ public final class AvroToXmlUtils {
      * <p><mapMarkup> <entry key="key1">value</entry> <entry key="key2">value</entry> </mapMarkup>
      */
     private static void buildMapChildNodesFromScenario2(
-            SpecificRecordBase record,
+            SpecificRecordBase message,
             Document document,
             List<Node> childNodes,
             Map<String, String> namespaces,
@@ -301,7 +324,7 @@ public final class AvroToXmlUtils {
                     "Using a valueXpath different from '.' while using an attribute key is not yet supported.");
         }
         if (valueSchema.getType() == Schema.Type.STRING) {
-            var map = (Map<String, String>) record.get(field.name());
+            var map = (Map<String, String>) message.get(field.name());
             if (map != null) {
                 for (var keyValue : map.entrySet()) {
                     Node entry = createNode(rootXpath, childNodes, document, namespaces);
@@ -395,9 +418,9 @@ public final class AvroToXmlUtils {
             return xpathList;
         }
 
-        // test if xpath is an array
-        if (xpath1.getClass().getSimpleName().equals("ArrayList")) {
-            xpathList.addAll((Collection<? extends String>) xpath1);
+        // Test if xpath is an array
+        if (xpath1.getClass().isAssignableFrom(List.class)) {
+            xpathList.addAll((Collection<String>) xpath1);
         } else {
             xpathList.add((String) xpath1);
         }
@@ -450,7 +473,7 @@ public final class AvroToXmlUtils {
                     }
                     case STRING, INT, LONG -> {
                         result = value.toString();
-                        if (value instanceof Instant) {
+                        if (value instanceof Instant instant) {
                             Optional<Schema> dateRecord = schema.getTypes().stream()
                                     .filter(type -> type.getType().equals(Schema.Type.LONG))
                                     .findAny();
@@ -459,7 +482,7 @@ public final class AvroToXmlUtils {
                                 String format = dateRecord.get().getProp(FORMAT_PROPERTIES_KEY);
 
                                 if (!StringUtils.isBlank(format)) {
-                                    Date toDate = Date.from((Instant) value);
+                                    Date toDate = Date.from(instant);
                                     SimpleDateFormat formatter = new SimpleDateFormat(format);
 
                                     String timeZone = dateRecord.get().getProp(TIMEZONE_PROPERTIES_KEY);

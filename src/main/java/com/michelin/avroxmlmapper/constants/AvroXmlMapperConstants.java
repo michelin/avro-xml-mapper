@@ -18,7 +18,7 @@
  */
 package com.michelin.avroxmlmapper.constants;
 
-/** Constants class for the AvroXmlMapper library */
+/** Constants for the AvroXmlMapper library. */
 public final class AvroXmlMapperConstants {
 
     /** Default xpath property name. */
@@ -32,7 +32,7 @@ public final class AvroXmlMapperConstants {
      * <p>Namespaces keys have to match the ones used in the xpath of the AVSC fields, but not necessarily the ones
      * defined in the XML document.
      *
-     * <p>Namespaces values (URI) have to match the ones defined in the XML document
+     * <p>Namespaces values (URI) have to match the ones defined in the XML document.
      */
     public static final String XML_NAMESPACE_SELECTOR_DEFAULT = "xmlNamespaces";
 
@@ -51,24 +51,26 @@ public final class AvroXmlMapperConstants {
     /** Default namespace key. Corresponds to the base empty namespace defined in the XML document with xmlns="..." */
     public static final String DEFAULT_NAMESPACE = "null";
 
-    /** Key to retrieve the format date properties on timestamp Avro attributes */
+    /** Key to retrieve the format date properties on timestamp Avro attributes. */
     public static final String FORMAT_PROPERTIES_KEY = "format";
 
-    /** Key to retrieve the time zone for date properties on timestamp Avro attributes */
+    /** Key to retrieve the time zone for date properties on timestamp Avro attributes. */
     public static final String TIMEZONE_PROPERTIES_KEY = "timezone";
 
-    /** Key to retrieve the scaleOut properties on decimal Avro attributes */
+    /** Key to retrieve the scaleOut properties on decimal Avro attributes. */
     public static final String SCALEOUT_PROPERTIES_KEY = "scaleOut";
 
-    /** Constant for the XML prefix "noprefixns" */
+    /** Constant for the XML prefix "noprefixns". */
     public static final String NO_PREFIX_NS = "noprefixns";
 
-    /** Constant for the XML prefix "xmlns" */
+    /** Constant for the XML prefix "xmlns". */
     public static final String XMLNS = "xmlns";
 
-    /** Constant to symbolize the position of an element */
+    /** Constant to symbolize the position of an element. */
     public static final String XML_ATTRIBUTE_POSITION = "specialAttrPosition";
 
-    /** Regex to split an xpath into levels */
+    /** Regex to split a xpath into levels. */
     public static final String REGEX_SPLIT_XPATH_LEVELS = "(?=/)(?![^\\[\\]]*])";
+
+    private AvroXmlMapperConstants() {}
 }
