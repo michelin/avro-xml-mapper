@@ -1,3 +1,5 @@
+<div align="center">
+
 # Avro XML Mapper
 
 [![GitHub Build](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml?branch=main&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml)
@@ -11,6 +13,8 @@
 Avro XML Mapper is a Java library that converts XML formatted data to Apache Avro and vice versa using specific attributes in the AVSC file.
 
 Your AVSC files become the only necessary reference for the functional mapping of your XML data to and from Apache Avro.
+
+</div>
 
 ## Table of Contents
 
