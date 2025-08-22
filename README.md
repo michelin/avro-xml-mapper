@@ -10,9 +10,9 @@
 [![SonarCloud Tests](https://img.shields.io/sonar/tests/michelin_avro-xml-mapper/main?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/component_measures?metric=tests&view=list&id=michelin_avro-xml-mapper)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?logo=apache&style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 
-Avro XML Mapper is a Java library that converts XML formatted data to Apache Avro and vice versa using specific attributes in the AVSC file.
+Turn XML into Avro and vice versa.
 
-Your AVSC files become the only necessary reference for the functional mapping of your XML data to and from Apache Avro.
+Use attributes in Avro files as a single source of truth for effortless data mapping.
 
 </div>
 
@@ -400,5 +400,5 @@ Conversion can be finalized using `GenericUtils#documentToString` method.
 ## Contribution
 
 We welcome contributions from the community! Before you get started, please take a look at
-our [contribution guide](https://github.com/michelin/avro-xml-mapper/blob/master/CONTRIBUTING.md) to learn about our
-guidelines and best practices. We appreciate your help in making Kstreamplify a better library for everyone.
+our [contribution guide](https://github.com/michelin/avro-xml-mapper/blob/main/CONTRIBUTING.md) to learn about our guidelines
+and best practices. We appreciate your help in making Avro XML Mapper a better tool for everyone.

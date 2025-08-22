@@ -12,10 +12,12 @@
         <key>key1</key>
         <value>value1</value>
     </stringMapScenario1>
+
     <stringMapScenario1>
         <key>key2</key>
         <value>value2</value>
     </stringMapScenario1>
+
     <stringMapScenario1>
         <key>key3</key>
         <value>value3</value>
@@ -47,7 +49,6 @@
             <subIntField attribute="attribute3">3</subIntField>
         </listItem>
     </recordList>
-
 
     <altListItem attribute="attrToto">toto</altListItem>
     <altListItem attribute="attrTutu">tutu</altListItem>

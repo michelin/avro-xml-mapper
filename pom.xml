@@ -7,7 +7,7 @@
     <version>0.1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>avro-xml-mapper</name>
-    <description>Avro XML Mapper is a library that simplifies conversions between XML and Avro using XPath annotations.</description>
+    <description>Turn XML into Avro and vice versa.</description>
     <url>https://github.com/michelin/avro-xml-mapper</url>
 
     <licenses>
@@ -47,20 +47,20 @@
     </scm>
 
     <properties>
-        <avro.version>1.11.1</avro.version>
+        <avro.version>1.12.0</avro.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <commons-io.version>2.20.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <jacoco.version>0.8.13</jacoco.version>
-        <junit-jupiter.version>5.10.0</junit-jupiter.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <junit-jupiter.version>5.13.4</junit-jupiter.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven.compiler.java.version>17</maven.compiler.java.version>
         <palantir.version>2.58.0</palantir.version>
-        <slf4j-api.version>2.0.7</slf4j-api.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>michelin</sonar.organization>
         <sonar.projectKey>michelin_avro-xml-mapper</sonar.projectKey>
@@ -79,12 +79,6 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
             <version>${avro.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

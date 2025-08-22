@@ -41,7 +41,8 @@
         "customXpath1": "recordMapWithDefault",
         "values": {
           "type": "record",
-          "name": "MapElement",
+          "name": "OtherMapElement",
+          "doc": "Should be named \"MapElement\" but: https://issues.apache.org/jira/browse/AVRO-4071",
           "fields": [
             {"name": "mapDateField", "type" : ["null",{"type": "long", "logicalType": "timestamp-millis"}], "default": null},
             {"name": "mapQuantityField", "type" : ["null",{"type":"bytes","logicalType": "decimal", "precision": 17, "scale": 4}], "default": null}

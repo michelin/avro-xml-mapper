@@ -29,7 +29,7 @@ public final class AvroXmlMapperConstants {
      *
      * <p>The value assigned to this property contains all the namespaces used in the XML document.
      *
-     * <p>Namespaces keys have to match the ones used in the xpath of the avsc fields, but not necessarily the ones
+     * <p>Namespaces keys have to match the ones used in the xpath of the AVSC fields, but not necessarily the ones
      * defined in the XML document.
      *
      * <p>Namespaces values (URI) have to match the ones defined in the XML document
