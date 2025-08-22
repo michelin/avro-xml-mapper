@@ -38,56 +38,55 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
 
 class AvroXmlMapperTest {
-
     @Test
-    void testXmlToAvro() throws Exception {
-        var input = IOUtils.toString(
+    void shouldConvertXmlStringToAvro() throws Exception {
+        String input = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlDefaultXpath.xml")),
                 StandardCharsets.UTF_8);
 
-        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class);
+        TestModelXMLDefaultXpath result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLDefaultXpath.class);
 
-        var expectedModel = buildDefaultXpathTestModel();
-
-        assertEquals(expectedModel, result);
+        assertEquals(buildDefaultXpathTestModel(), result);
     }
 
     @Test
-    void testXmlToAvroWithCustomXpathSelector() throws Exception {
-        var input = IOUtils.toString(
+    void shouldConvertXmlStringToAvroWithCustomXpathSelector() throws Exception {
+        String input = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom1.xml")),
                 StandardCharsets.UTF_8);
 
-        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLMultipleXpath.class, "customXpath1");
+        TestModelXMLMultipleXpath result =
+                AvroXmlMapper.convertXmlStringToAvro(input, TestModelXMLMultipleXpath.class, "customXpath1");
 
         assertEquals(buildMultiXpathTestModel(), result);
     }
 
     @Test
-    void testXmlToAvroWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
-        var input = IOUtils.toString(
+    void shouldConvertXmlStringToAvroWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
+        String input = IOUtils.toString(
                 Objects.requireNonNull(
                         AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom2AndCustomXmlNamespaces.xml")),
                 StandardCharsets.UTF_8);
 
-        var result = AvroXmlMapper.convertXmlStringToAvro(
+        TestModelXMLMultipleXpath result = AvroXmlMapper.convertXmlStringToAvro(
                 input, TestModelXMLMultipleXpath.class, "customXpath2", "xmlNamespacesCustom2");
 
         assertEquals(buildMultiXpathTestModel2(), result);
     }
 
     @Test
-    void testAvroToXml() throws Exception {
-        var expectedModel = buildDefaultXpathTestModel();
-
-        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel);
-        var expected = IOUtils.toString(
+    void shouldConvertAvroToXml() throws Exception {
+        TestModelXMLDefaultXpath expectedModel = buildDefaultXpathTestModel();
+        String xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel);
+        String expected = IOUtils.toString(
                         Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlDefaultXpath.xml")),
                         StandardCharsets.UTF_8)
                 .replaceAll("[\r\n]+", "")
@@ -100,12 +99,11 @@ class AvroXmlMapperTest {
     }
 
     @Test
-    void testAvroToXmlWithCustomXpathSelector() throws Exception {
+    void shouldConvertAvroToXmlWithCustomXpathSelector() throws Exception {
+        TestModelXMLMultipleXpath expectedModel = buildMultiXpathTestModel();
 
-        var expectedModel = buildMultiXpathTestModel();
-
-        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel, "customXpath1");
-        var expected = IOUtils.toString(
+        String xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel, "customXpath1");
+        String expected = IOUtils.toString(
                         Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom1.xml")),
                         StandardCharsets.UTF_8)
                 .replaceAll("[\r\n]+", "")
@@ -119,11 +117,11 @@ class AvroXmlMapperTest {
     }
 
     @Test
-    void testAvroToXmlWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
-        var expectedModel = buildMultiXpathTestModel2();
+    void shouldConvertAvroToXmlWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
+        TestModelXMLMultipleXpath expectedModel = buildMultiXpathTestModel2();
 
-        var xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel, "customXpath2", "xmlNamespacesCustom2");
-        var expected = IOUtils.toString(
+        String xmlResult = AvroXmlMapper.convertAvroToXmlString(expectedModel, "customXpath2", "xmlNamespacesCustom2");
+        String expected = IOUtils.toString(
                         Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream(
                                 "/xmlXpathCustom2AndCustomXmlNamespaces.xml")),
                         StandardCharsets.UTF_8)
@@ -138,54 +136,52 @@ class AvroXmlMapperTest {
     }
 
     @Test
-    void testAvroToXMLDocument() throws Exception {
-        var inputModel = buildDefaultXpathTestModel();
+    void shouldConvertAvroToXmlDocument() throws Exception {
+        TestModelXMLDefaultXpath inputModel = buildDefaultXpathTestModel();
 
-        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel);
-
-        var expectedStringUncleaned = IOUtils.toString(
+        Document xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel);
+        String expectedStringUncleaned = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlDefaultXpath.xml")),
                 StandardCharsets.UTF_8);
-        var expectedDocument =
+        Document expectedDocument =
                 XMLUnit.getWhitespaceStrippedDocument(XMLUnit.buildControlDocument(expectedStringUncleaned));
 
         assertEquals(GenericUtils.documentToString(expectedDocument), GenericUtils.documentToString(xmlResult));
     }
 
     @Test
-    void testAvroToXmlDocumentWithCustomXpathSelector() throws Exception {
-        var inputModel = buildMultiXpathTestModel();
+    void shouldConvertAvroToXmlDocumentWithCustomXpathSelector() throws Exception {
+        TestModelXMLMultipleXpath inputModel = buildMultiXpathTestModel();
 
-        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel, "customXpath1");
-
-        var expectedStringUncleaned = IOUtils.toString(
+        Document xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel, "customXpath1");
+        String expectedStringUncleaned = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom1.xml")),
                 StandardCharsets.UTF_8);
-        var expectedDocument =
+        Document expectedDocument =
                 XMLUnit.getWhitespaceStrippedDocument(XMLUnit.buildControlDocument(expectedStringUncleaned));
 
         assertEquals(GenericUtils.documentToString(expectedDocument), GenericUtils.documentToString(xmlResult));
     }
 
     @Test
-    void testAvroToXmlDocumentWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
-        var inputModel = buildMultiXpathTestModel2();
+    void shouldConvertAvroToXmlDocumentWithCustomXpathSelectorAndCustomXmlNamespacesSelector() throws Exception {
+        TestModelXMLMultipleXpath inputModel = buildMultiXpathTestModel2();
 
-        var xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel, "customXpath2", "xmlNamespacesCustom2");
+        Document xmlResult = AvroXmlMapper.convertAvroToXmlDocument(inputModel, "customXpath2", "xmlNamespacesCustom2");
 
-        var expectedStringUncleaned = IOUtils.toString(
+        String expectedStringUncleaned = IOUtils.toString(
                 Objects.requireNonNull(
                         AvroXmlMapperTest.class.getResourceAsStream("/xmlXpathCustom2AndCustomXmlNamespaces.xml")),
                 StandardCharsets.UTF_8);
-        var expectedDocument =
+        Document expectedDocument =
                 XMLUnit.getWhitespaceStrippedDocument(XMLUnit.buildControlDocument(expectedStringUncleaned));
 
         assertEquals(GenericUtils.documentToString(expectedDocument), GenericUtils.documentToString(xmlResult));
     }
 
     @Test
-    void testFaultyNamespaceXmlToAvro() throws Exception {
-        var input = IOUtils.toString(
+    void shouldThrowExceptionWhenConvertingFaultyNamespaceXmlToAvro() throws Exception {
+        String input = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlFaultyNamespace.xml")),
                 StandardCharsets.UTF_8);
 
@@ -200,11 +196,11 @@ class AvroXmlMapperTest {
     }
 
     @Test
-    void testEmptyDefaultNamespaceXmlToAvro() throws Exception {
-        var input = IOUtils.toString(
+    void shouldConvertEmptyDefaultNamespaceXmlToAvro() throws Exception {
+        String input = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithoutDefaultNamespace.xml")),
                 StandardCharsets.UTF_8);
-        var result = AvroXmlMapper.convertXmlStringToAvro(
+        TestModelEmptyNamespace result = AvroXmlMapper.convertXmlStringToAvro(
                 input, TestModelEmptyNamespace.class, "specificXpath", "specificXmlNamespaces");
 
         assertEquals(
@@ -216,11 +212,11 @@ class AvroXmlMapperTest {
     }
 
     @Test
-    void testEmptyNamespaceXmlToAvro() throws Exception {
-        var input = IOUtils.toString(
+    void shouldConvertEmptyNamespaceXmlToAvro() throws Exception {
+        String input = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithoutNamespace.xml")),
                 StandardCharsets.UTF_8);
-        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelEmptyNamespace.class);
+        TestModelEmptyNamespace result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelEmptyNamespace.class);
 
         assertEquals(
                 TestModelEmptyNamespace.newBuilder()
@@ -232,7 +228,7 @@ class AvroXmlMapperTest {
     }
 
     @Test
-    void testEmbeddedRecordXMLToAvro() throws Exception {
+    void shouldConvertEmbeddedRecordXMLToAvro() throws Exception {
         TestModelParentRecord expectedModel = TestModelParentRecord.newBuilder()
                 .setEmbeddedRecord(EmbeddedRecord.newBuilder()
                         .setStringField("Hello")
@@ -240,16 +236,16 @@ class AvroXmlMapperTest {
                         .build())
                 .build();
 
-        var input = IOUtils.toString(
+        String input = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithEmbeddedRecord.xml")),
                 StandardCharsets.UTF_8);
-        var result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelParentRecord.class);
+        TestModelParentRecord result = AvroXmlMapper.convertXmlStringToAvro(input, TestModelParentRecord.class);
 
         assertEquals(expectedModel, result);
     }
 
     @Test
-    void testEmbeddedRecordAvroToXML() throws Exception {
+    void shouldConvertEmbeddedRecordAvroToXML() throws Exception {
         TestModelParentRecord inputModel = TestModelParentRecord.newBuilder()
                 .setEmbeddedRecord(EmbeddedRecord.newBuilder()
                         .setStringField("Hello")
@@ -258,17 +254,16 @@ class AvroXmlMapperTest {
                         .build())
                 .build();
 
-        var expectedString = IOUtils.toString(
+        String expectedString = IOUtils.toString(
                 Objects.requireNonNull(AvroXmlMapperTest.class.getResourceAsStream("/xmlWithEmbeddedRecord.xml")),
                 StandardCharsets.UTF_8);
-        var result = AvroXmlMapper.convertAvroToXmlDocument(inputModel);
-        var expectedDocument = XMLUnit.getWhitespaceStrippedDocument(XMLUnit.buildControlDocument(expectedString));
+        Document result = AvroXmlMapper.convertAvroToXmlDocument(inputModel);
+        Document expectedDocument = XMLUnit.getWhitespaceStrippedDocument(XMLUnit.buildControlDocument(expectedString));
         assertEquals(GenericUtils.documentToString(expectedDocument), GenericUtils.documentToString(result));
     }
 
     private TestModelXMLDefaultXpath buildDefaultXpathTestModel() {
-
-        var mapResult = new HashMap<String, String>();
+        Map<String, String> mapResult = new HashMap<>();
         mapResult.put("key1", "value1");
         mapResult.put("key2", "value2");
         mapResult.put("key3", "value3");
@@ -310,8 +305,7 @@ class AvroXmlMapperTest {
     }
 
     private TestModelXMLMultipleXpath buildMultiXpathTestModel() {
-
-        var mapResult = new HashMap<String, String>();
+        Map<String, String> mapResult = new HashMap<>();
         mapResult.put("key1", "value1");
         mapResult.put("key2", "value2");
         mapResult.put("key3", "value3");
@@ -344,8 +338,7 @@ class AvroXmlMapperTest {
     }
 
     private TestModelXMLMultipleXpath buildMultiXpathTestModel2() {
-
-        var mapResult = new HashMap<String, String>();
+        Map<String, String> mapResult = new HashMap<>();
         mapResult.put("key1", "value1");
         mapResult.put("key2", "value2");
         mapResult.put("key3", "value3");

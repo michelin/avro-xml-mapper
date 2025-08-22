@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 
 /** Utility Class for XML parsing (Xpath) */
 public final class AvroXmlMapper {
+    private static final String GET_CLASS_SCHEMA_METHOD = "getClassSchema";
 
     private AvroXmlMapper() {}
 
@@ -50,7 +51,8 @@ public final class AvroXmlMapper {
      */
     public static <T extends SpecificRecordBase> T convertXmlStringToAvro(String stringDocument, Class<T> clazz)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Schema schema = (Schema) (clazz.getDeclaredMethod("getClassSchema").invoke(null));
+        Schema schema =
+                (Schema) (clazz.getDeclaredMethod(GET_CLASS_SCHEMA_METHOD).invoke(null));
         var document = stringToDocument(stringDocument, xmlNamespaces(schema));
         return XmlToAvroUtils.convert(
                 document.getDocumentElement(),
@@ -77,7 +79,8 @@ public final class AvroXmlMapper {
     public static <T extends SpecificRecordBase> T convertXmlStringToAvro(
             String stringDocument, Class<T> clazz, String xpathSelector)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Schema schema = (Schema) (clazz.getDeclaredMethod("getClassSchema").invoke(null));
+        Schema schema =
+                (Schema) (clazz.getDeclaredMethod(GET_CLASS_SCHEMA_METHOD).invoke(null));
         var document = stringToDocument(stringDocument, xmlNamespaces(schema));
         return XmlToAvroUtils.convert(
                 document.getDocumentElement(),
@@ -106,7 +109,8 @@ public final class AvroXmlMapper {
     public static <T extends SpecificRecordBase> T convertXmlStringToAvro(
             String stringDocument, Class<T> clazz, String xpathSelector, String xmlNamespacesSelector)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Schema schema = (Schema) (clazz.getDeclaredMethod("getClassSchema").invoke(null));
+        Schema schema =
+                (Schema) (clazz.getDeclaredMethod(GET_CLASS_SCHEMA_METHOD).invoke(null));
         var document = stringToDocument(stringDocument, xmlNamespaces(schema, xmlNamespacesSelector));
         return XmlToAvroUtils.convert(
                 document.getDocumentElement(),
@@ -116,10 +120,6 @@ public final class AvroXmlMapper {
                 schema.getNamespace(),
                 xpathSelector);
     }
-
-    /* *************************************************** */
-    /* Build an XML document in String format from an Avro */
-    /* *************************************************** */
 
     /**
      * Create an XML in String format from a SpecificRecordBase, using default "xpath" and "xmlNamespaces" properties

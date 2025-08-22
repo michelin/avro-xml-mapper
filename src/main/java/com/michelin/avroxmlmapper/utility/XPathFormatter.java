@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 /** Utility class to format xpath expressions. */
 public class XPathFormatter {
 
+    private XPathFormatter() {}
+
     /**
      * Helper method to format the xpath before evaluation : - add the generic namespace in order to avoid to set a
      * generic namespace in all our final code xpath expression - re-write filters based on attribute in order to be
