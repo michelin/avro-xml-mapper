@@ -9,16 +9,17 @@ on:
 
 jobs:
   tag:
+    name: Tag
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/hotfix/v')
     steps:
       - name: Checkout project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.CI_CD_TOKEN }}
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -31,6 +32,16 @@ jobs:
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+
+      - name: Validate release version format
+        run: |
+          if [[ ! "${{ github.event.inputs.release_version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release version must follow SemVer format (X.Y.Z) and start with a digit"
+            echo "Current value: ${{ github.event.inputs.release_version }}"
+            echo "Expected format: 1.2.3, 2.0.0, etc."
+            echo "Note: The 'v' prefix will be added automatically to the tag. Do not include it manually"
+            exit 1
+          fi
 
       - name: Tag
         run: |

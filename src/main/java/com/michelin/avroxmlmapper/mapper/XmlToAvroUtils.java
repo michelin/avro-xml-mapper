@@ -1,17 +1,28 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package com.michelin.avroxmlmapper.mapper;
+
+import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.*;
+import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
 
 import com.michelin.avroxmlmapper.exception.AvroXmlMapperException;
 import com.michelin.avroxmlmapper.utility.XPathFormatter;
-import org.apache.avro.JsonProperties;
-import org.apache.avro.LogicalTypes;
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import javax.xml.namespace.NamespaceContext;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -26,28 +37,38 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
+import javax.xml.namespace.NamespaceContext;
+import org.apache.avro.JsonProperties;
+import org.apache.avro.LogicalTypes;
+import org.apache.avro.Schema;
+import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
-import static com.michelin.avroxmlmapper.constants.AvroXmlMapperConstants.*;
-import static com.michelin.avroxmlmapper.utility.GenericUtils.*;
-
-/**
- * Utility class for converting XML to Avro.
- */
+/** Utility class for converting XML to Avro. */
 public final class XmlToAvroUtils {
 
     /**
      * Converts, recursively, the content of an XML-node into SpecificRecord (avro).
      *
-     * @param fullNode         XML-node to convert
-     * @param orphanNode       XML-node to convert without parent context
-     * @param clazz            class of the SpecificRecord to generate
+     * @param fullNode XML-node to convert
+     * @param orphanNode XML-node to convert without parent context
+     * @param clazz class of the SpecificRecord to generate
      * @param namespaceContext the namespace context
-     * @param baseNamespace    base namespace for the generated SpecificRecord classes
-     * @param xpathSelector    the xpathSelector property used to search for the xpath mapping in the Avro definition
-     * @param <T>              The type of the Avro object
+     * @param baseNamespace base namespace for the generated SpecificRecord classes
+     * @param xpathSelector the xpathSelector property used to search for the xpath mapping in the Avro definition
+     * @param <T> The type of the Avro object
      * @return SpecificRecord generated
      */
-    static <T extends SpecificRecordBase> T convert(Node fullNode, Node orphanNode, Class<T> clazz, NamespaceContext namespaceContext, String baseNamespace, String xpathSelector) {
+    static <T extends SpecificRecordBase> T convert(
+            Node fullNode,
+            Node orphanNode,
+            Class<T> clazz,
+            NamespaceContext namespaceContext,
+            String baseNamespace,
+            String xpathSelector) {
         try {
             T record = clazz.getDeclaredConstructor().newInstance();
             for (Schema.Field field : record.getSchema().getFields()) {
@@ -59,26 +80,46 @@ public final class XmlToAvroUtils {
                         // nothing
                         break;
                     case RECORD:
-                        convertXMLRecordToAvro(record, fullNode, orphanNode, namespaceContext, baseNamespace, field, fieldType, xpathSelector);
+                        convertXMLRecordToAvro(
+                                record,
+                                fullNode,
+                                orphanNode,
+                                namespaceContext,
+                                baseNamespace,
+                                field,
+                                fieldType,
+                                xpathSelector);
                         break;
                     case ARRAY:
-                        convertXMLArrayToAvro(record, fullNode, orphanNode, namespaceContext, baseNamespace, field, fieldType, xpathSelector);
+                        convertXMLArrayToAvro(
+                                record,
+                                fullNode,
+                                orphanNode,
+                                namespaceContext,
+                                baseNamespace,
+                                field,
+                                fieldType,
+                                xpathSelector);
                         break;
                     case MAP:
-                        convertXMLMapToAvro(record, fullNode, orphanNode, namespaceContext, field, fieldType, xpathSelector);
+                        convertXMLMapToAvro(
+                                record, fullNode, orphanNode, namespaceContext, field, fieldType, xpathSelector);
                         break;
                     case LONG:
-                        //Handle dates to a TimezonedTimestamp format
-                        if (fieldType.getLogicalType() != null && fieldType.getLogicalType().getName().equals("timestamp-millis")) {
+                        // Handle dates to a TimezonedTimestamp format
+                        if (fieldType.getLogicalType() != null
+                                && fieldType.getLogicalType().getName().equals("timestamp-millis")) {
                             convertXMLDateToAvro(record, fullNode, orphanNode, namespaceContext, field, xpathSelector);
                         }
                         break;
                     case BYTES:
-                        convertXMLBytesToAvro(record, fullNode, orphanNode, namespaceContext, field, fieldType, xpathSelector);
+                        convertXMLBytesToAvro(
+                                record, fullNode, orphanNode, namespaceContext, field, fieldType, xpathSelector);
                         break;
                     default:
                         // all other = primitive types
-                        convertXMLPrimitiveTypeToAvro(record, fullNode, orphanNode, namespaceContext, field, fieldType, xpathSelector);
+                        convertXMLPrimitiveTypeToAvro(
+                                record, fullNode, orphanNode, namespaceContext, field, fieldType, xpathSelector);
                 }
             }
             return record;
@@ -87,13 +128,21 @@ public final class XmlToAvroUtils {
         }
     }
 
-    private static void convertXMLMapToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, Schema.Field field, Schema fieldType, String xpathSelector) {
+    private static void convertXMLMapToAvro(
+            SpecificRecordBase record,
+            Node fullNode,
+            Node orphanNode,
+            NamespaceContext namespaceContext,
+            Schema.Field field,
+            Schema fieldType,
+            String xpathSelector) {
 
         // initialize value Schema
         Schema valueSchema = fieldType.getValueType();
         String rootXpath = null, keyXpath = null, valueXpath = null;
         // try to get the map xpath properties
-        LinkedHashMap<String, String> mapXpathProperties = (LinkedHashMap<String, String>) field.getObjectProp(xpathSelector);
+        LinkedHashMap<String, String> mapXpathProperties =
+                (LinkedHashMap<String, String>) field.getObjectProp(xpathSelector);
 
         if (mapXpathProperties != null) {
             // new scenarios
@@ -109,13 +158,16 @@ public final class XmlToAvroUtils {
                     || valueSchema.getType() == Schema.Type.DOUBLE
                     || valueSchema.getType() == Schema.Type.BOOLEAN) {
                 Map<String, Object> mapPrimitive = new HashMap<>();
-                for (Node elementNode : asList(xPathNodeListEvaluation(fullNode, orphanNode, rootXpath, namespaceContext))) {
+                for (Node elementNode :
+                        asList(xPathNodeListEvaluation(fullNode, orphanNode, rootXpath, namespaceContext))) {
                     var orphanElementNode = elementNode.cloneNode(true);
                     String key = xPathStringEvaluation(elementNode, orphanElementNode, keyXpath, namespaceContext);
 
                     // get the value to apply default if it isn't there
-                    var value = parseValue(valueSchema.getType(), xPathStringEvaluation(elementNode, orphanElementNode, valueXpath, namespaceContext));
-                    if(value == null){
+                    var value = parseValue(
+                            valueSchema.getType(),
+                            xPathStringEvaluation(elementNode, orphanElementNode, valueXpath, namespaceContext));
+                    if (value == null) {
                         value = fieldType.getObjectProps().get("default");
                     }
 
@@ -130,7 +182,8 @@ public final class XmlToAvroUtils {
                     }
                 }
             } else { // for example a map<String, SpecificRecordBase>
-                throw new NotImplementedException("Converting from XML to '" + valueSchema.getType() + "' type is not implemented yet");
+                throw new NotImplementedException(
+                        "Converting from XML to '" + valueSchema.getType() + "' type is not implemented yet");
             }
         } else {
             // Set avro default value if it's different from null
@@ -138,25 +191,42 @@ public final class XmlToAvroUtils {
                 record.put(field.name(), field.defaultVal());
             }
         }
-
     }
 
-    private static void convertXMLArrayToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, String baseNamespace, Schema.Field field, Schema fieldType, String xpathSelector) throws ClassNotFoundException {
+    private static void convertXMLArrayToAvro(
+            SpecificRecordBase record,
+            Node fullNode,
+            Node orphanNode,
+            NamespaceContext namespaceContext,
+            String baseNamespace,
+            Schema.Field field,
+            Schema fieldType,
+            String xpathSelector)
+            throws ClassNotFoundException {
 
         Schema elementSchema = fieldType.getElementType();
         String xpath = XPathFormatter.format(field.getProp(xpathSelector));
         if (xpath != null) {
             if (extractRealType(elementSchema).getType() == Schema.Type.RECORD) { // an array of records
                 List<SpecificRecordBase> listRecords = new ArrayList<>();
-                for (Node elementNode : asList(xPathNodeListEvaluation(fullNode, orphanNode, xpath, namespaceContext))) {
-                    listRecords.add(convert(elementNode, elementNode, baseClass(baseNamespace, elementSchema.getName()), namespaceContext, baseNamespace, xpathSelector));
+                for (Node elementNode :
+                        asList(xPathNodeListEvaluation(fullNode, orphanNode, xpath, namespaceContext))) {
+                    listRecords.add(convert(
+                            elementNode,
+                            elementNode,
+                            baseClass(baseNamespace, elementSchema.getName()),
+                            namespaceContext,
+                            baseNamespace,
+                            xpathSelector));
                 }
                 record.put(field.name(), listRecords);
             } else if (extractRealType(elementSchema).getType() == Schema.Type.STRING) { // an array of string
-                List<String> listValues = new ArrayList<>(xPathStringListEvaluation(fullNode, orphanNode, xpath, namespaceContext));
+                List<String> listValues =
+                        new ArrayList<>(xPathStringListEvaluation(fullNode, orphanNode, xpath, namespaceContext));
                 record.put(field.name(), listValues);
             } else { // an array of other primitive values
-                throw new NotImplementedException("Converting xml to avro using an array type different from record or String is not yet supported");
+                throw new NotImplementedException(
+                        "Converting xml to avro using an array type different from record or String is not yet supported");
             }
         } else {
             // Set avro default value if it's different from null
@@ -164,11 +234,18 @@ public final class XmlToAvroUtils {
                 record.put(field.name(), field.defaultVal());
             }
         }
-
     }
 
-    private static void convertXMLBytesToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, Schema.Field field, Schema fieldType, String xpathSelector) {
-        if (fieldType.getLogicalType() != null && fieldType.getLogicalType().getName().equals("decimal")) {
+    private static void convertXMLBytesToAvro(
+            SpecificRecordBase record,
+            Node fullNode,
+            Node orphanNode,
+            NamespaceContext namespaceContext,
+            Schema.Field field,
+            Schema fieldType,
+            String xpathSelector) {
+        if (fieldType.getLogicalType() != null
+                && fieldType.getLogicalType().getName().equals("decimal")) {
             String xpath = XPathFormatter.format(field.getProp(xpathSelector));
             BigDecimal result = null;
             var scale = ((LogicalTypes.Decimal) fieldType.getLogicalType()).getScale();
@@ -189,39 +266,69 @@ public final class XmlToAvroUtils {
         }
     }
 
-    private static void convertXMLDateToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, Schema.Field field, String xpathSelector) {
+    private static void convertXMLDateToAvro(
+            SpecificRecordBase record,
+            Node fullNode,
+            Node orphanNode,
+            NamespaceContext namespaceContext,
+            Schema.Field field,
+            String xpathSelector) {
         String xpath = XPathFormatter.format(field.getProp(xpathSelector));
         Instant resultDate = null;
         if (xpath != null) {
             String dateTimeString = xPathStringEvaluation(fullNode, orphanNode, xpath, namespaceContext);
             if (dateTimeString != null && dateTimeString.length() > 0) {
-                //convert to date
+                // convert to date
                 resultDate = convertUnknownFormatDateToTimestamp(dateTimeString);
             }
         }
         if (resultDate == null && field.hasDefaultValue() && field.defaultVal() != JsonProperties.NULL_VALUE) {
             resultDate = Instant.ofEpochMilli((Long) field.defaultVal());
-
         }
         record.put(field.name(), resultDate);
     }
 
-    private static void convertXMLRecordToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, String baseNamespace, Schema.Field field, Schema fieldType, String xpathSelector) throws ClassNotFoundException {
+    private static void convertXMLRecordToAvro(
+            SpecificRecordBase record,
+            Node fullNode,
+            Node orphanNode,
+            NamespaceContext namespaceContext,
+            String baseNamespace,
+            Schema.Field field,
+            Schema fieldType,
+            String xpathSelector)
+            throws ClassNotFoundException {
         String xpath = XPathFormatter.format(field.getProp(xpathSelector));
         if (xpath != null) {
             List<Node> nodeList = asList(xPathNodeListEvaluation(fullNode, orphanNode, xpath, namespaceContext));
             if (nodeList.size() > 0) {
 
                 var currentNode = nodeList.get(0);
-                record.put(field.name(), convert(currentNode, currentNode.cloneNode(true), baseClass(baseNamespace, fieldType.getName()), namespaceContext, baseNamespace, xpathSelector));
+                record.put(
+                        field.name(),
+                        convert(
+                                currentNode,
+                                currentNode.cloneNode(true),
+                                baseClass(baseNamespace, fieldType.getName()),
+                                namespaceContext,
+                                baseNamespace,
+                                xpathSelector));
             }
         }
     }
 
-    private static void convertXMLPrimitiveTypeToAvro(SpecificRecordBase record, Node fullNode, Node orphanNode, NamespaceContext namespaceContext, Schema.Field field, Schema fieldType, String xpathSelector) {
+    private static void convertXMLPrimitiveTypeToAvro(
+            SpecificRecordBase record,
+            Node fullNode,
+            Node orphanNode,
+            NamespaceContext namespaceContext,
+            Schema.Field field,
+            Schema fieldType,
+            String xpathSelector) {
         String xpath = XPathFormatter.format(field.getProp(xpathSelector));
         if (xpath != null) {
-            Object value = parseValue(fieldType.getType(), xPathStringEvaluation(fullNode, orphanNode, xpath, namespaceContext));
+            Object value = parseValue(
+                    fieldType.getType(), xPathStringEvaluation(fullNode, orphanNode, xpath, namespaceContext));
             if (value != null) {
                 record.put(field.name(), value);
                 return;
@@ -234,7 +341,8 @@ public final class XmlToAvroUtils {
     }
 
     /**
-     * Tries to convert the string date using a number of known patterns. Throws a DateTimeParseException if nothing worked
+     * Tries to convert the string date using a number of known patterns. Throws a DateTimeParseException if nothing
+     * worked
      *
      * @param date The string date to convert
      * @return The timestamp corresponding to the initial string
@@ -341,28 +449,33 @@ public final class XmlToAvroUtils {
         return result.toInstant();
     }
 
-
     @SuppressWarnings("unchecked")
-    private static Class<SpecificRecordBase> baseClass(String baseNamespace, String typeName) throws ClassNotFoundException {
+    private static Class<SpecificRecordBase> baseClass(String baseNamespace, String typeName)
+            throws ClassNotFoundException {
         return (Class<SpecificRecordBase>) Class.forName(baseNamespace + "." + typeName);
     }
 
     /**
-     * <p>Redefines all xml namespaces used in the xml document at the root markup.</p>
-     * <p>Tries to match avsc-defined namespaces with the actual xml namespaces and deduplicates if there are any namespaces pointing to the same URI</p>
+     * Redefines all xml namespaces used in the xml document at the root markup.
      *
-     * @param document         the xml document
+     * <p>Tries to match avsc-defined namespaces with the actual xml namespaces and deduplicates if there are any
+     * namespaces pointing to the same URI
+     *
+     * @param document the xml document
      * @param xmlNamespacesMap the map of namespaces defined in the avsc schema
      * @param mapOldNamespaces the map of namespaces defined in the xml document
      */
-    public static void simplifyNamespaces(Document document, Map<String, String> xmlNamespacesMap, Map<String, List<String>> mapOldNamespaces) {
+    public static void simplifyNamespaces(
+            Document document, Map<String, String> xmlNamespacesMap, Map<String, List<String>> mapOldNamespaces) {
         // all namespaces are redefined on root element, matching old namespaces and target namespaces on URI
         for (Map.Entry<String, String> entry : xmlNamespacesMap.entrySet()) {
             // Check xml and avsc match on namespaces definitions
             // if the namespace is the main namespace without prefix (xmlns=...), we use the "null" key
             if (DEFAULT_NAMESPACE.equalsIgnoreCase(entry.getKey())) {
                 if (mapOldNamespaces.get(entry.getValue()) == null) {
-                    throw new NullPointerException("The default namespace uri provided in the avsc schema (\"" + entry.getValue() + "\") is not defined in the XML document. Either fix your avsc schema to match the default namespace defined in the xml, or make sure that the xml document you are converting is not faulty.");
+                    throw new NullPointerException(
+                            "The default namespace uri provided in the avsc schema (\"" + entry.getValue()
+                                    + "\") is not defined in the XML document. Either fix your avsc schema to match the default namespace defined in the xml, or make sure that the xml document you are converting is not faulty.");
                 }
                 document.getDocumentElement().setAttribute(XMLNS + ":" + NO_PREFIX_NS, entry.getValue());
                 for (String prefixToReplace : mapOldNamespaces.get(entry.getValue())) {
@@ -390,7 +503,7 @@ public final class XmlToAvroUtils {
     /**
      * Replace the old prefix by a new prefix. For the main namespace without prefix (xmlns=...), oldPrefix is null.
      *
-     * @param node      the node to update
+     * @param node the node to update
      * @param oldPrefix the prefix to replace (can be null).
      * @param newPrefix the prefix to use instead of the old.
      */
@@ -403,8 +516,9 @@ public final class XmlToAvroUtils {
     }
 
     /**
-     * <p>Recursively removes all namespace definitions from the given node and its children.</p>
-     * <p>Namespaces definition are found by searching for attributes starting with the "xmlns" char sequence.</p>
+     * Recursively removes all namespace definitions from the given node and its children.
+     *
+     * <p>Namespaces definition are found by searching for attributes starting with the "xmlns" char sequence.
      *
      * @param node The node to purge
      */
@@ -428,14 +542,12 @@ public final class XmlToAvroUtils {
         }
 
         markedForDeletion.forEach(attributes::removeNamedItem);
-
     }
 
-
     /**
-     * <p>Recursively extracts all namespaces from the given node and its children.</p>
+     * Recursively extracts all namespaces from the given node and its children.
      *
-     * @param node          The node to extract namespaces from
+     * @param node The node to extract namespaces from
      * @param oldNamespaces The map of namespaces to update
      * @return The updated map of namespaces
      */
@@ -459,7 +571,9 @@ public final class XmlToAvroUtils {
                 if (StringUtils.isEmpty(namespace)) {
                     continue;
                 }
-                var prefix = attribute.getNodeName().equals(XMLNS) ? NO_PREFIX_NS : attribute.getNodeName().replace(XMLNS + ":", "");
+                var prefix = attribute.getNodeName().equals(XMLNS)
+                        ? NO_PREFIX_NS
+                        : attribute.getNodeName().replace(XMLNS + ":", "");
                 var namespacePrefixes = oldNamespaces.get(namespace);
 
                 if (namespacePrefixes != null && !namespacePrefixes.contains(prefix)) {
