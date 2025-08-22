@@ -50,7 +50,7 @@
         <avro.version>1.12.0</avro.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <commons-io.version>2.20.0</commons-io.version>
-        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
         <jacoco.version>0.8.13</jacoco.version>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
