@@ -18,7 +18,7 @@
     {"name": "dateFieldWithDefault", "type" : [{"type": "long", "logicalType": "timestamp-millis"},"null"], "default": 0, "xpath": "dateFieldWithDefault"},
     {
       "name": "stringMapWithNullDefault",
-      "type": ["null", { "type": "map", "values": "string"}],
+      "type": ["null", { "type": "map", "values": "string" }],
       "default": null
     },
     {

@@ -7,7 +7,7 @@ This guide will help you understand the process and expectations for contributin
 
 ### Issues
 
-If you want to report a bug, request a feature, or suggest an improvement, please open an issue on the [GitHub repository](https://github.com/michelin/kstreamplify/issues)
+If you want to report a bug, request a feature, or suggest an improvement, please open an issue on the [GitHub repository](https://github.com/michelin/avro-xml-mapper/issues)
 and fill out the appropriate template.
 
 If you find an existing issue that matches your problem, please:
