@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src=".readme/logo.svg" alt="Avro XML Mapper"/>
+
 # Avro XML Mapper
 
 [![GitHub Build](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml?branch=main&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml)
@@ -10,7 +12,7 @@
 [![SonarCloud Tests](https://img.shields.io/sonar/tests/michelin_avro-xml-mapper/main?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/component_measures?metric=tests&view=list&id=michelin_avro-xml-mapper)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?logo=apache&style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 
-[Getting Started](#getting-started)
+[Getting Started](#getting-started) • [Usage](#usage)
 
 Turn XML into Avro and vice versa.
 
