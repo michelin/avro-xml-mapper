@@ -53,7 +53,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <jacoco.version>0.8.13</jacoco.version>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.40</lombok.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
