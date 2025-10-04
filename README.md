@@ -38,8 +38,6 @@ Turn XML into Avro and vice versa.
 
 ## Getting Started
 
-[![javadoc](https://javadoc.io/badge2/com.michelin/avro-xml-mapper/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/com.michelin/avro-xml-mapper)
-
 To get started, add the following dependency:
 
 ```xml
@@ -405,3 +403,4 @@ We welcome contributions from the community! Before you get started, please take
 our [contribution guide](https://github.com/michelin/avro-xml-mapper/blob/main/CONTRIBUTING.md) to learn about our guidelines
 
 and best practices. We appreciate your help in making Avro XML Mapper a better tool for everyone.
+
