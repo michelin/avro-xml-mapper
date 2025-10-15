@@ -60,7 +60,7 @@
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven.compiler.java.version>17</maven.compiler.java.version>
-        <palantir.version>2.58.0</palantir.version>
+        <palantir.version>2.80.0</palantir.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>michelin</sonar.organization>
@@ -98,7 +98,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -194,6 +194,13 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${maven.compiler.java.version}</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
