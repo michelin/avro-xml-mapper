@@ -62,6 +62,7 @@
         <maven.compiler.java.version>17</maven.compiler.java.version>
         <palantir.version>2.80.0</palantir.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
+        <sonar-maven-plugin.version>5.3.0.6276</sonar-maven-plugin.version>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>michelin</sonar.organization>
         <sonar.projectKey>michelin_avro-xml-mapper</sonar.projectKey>
@@ -117,6 +118,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
@@ -260,6 +262,12 @@
                         <phase>test</phase>
                     </execution>
                 </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar-maven-plugin.version}</version>
             </plugin>
 
             <plugin>
