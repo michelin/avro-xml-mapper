@@ -7,6 +7,7 @@
 [![GitHub Build](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml?branch=main&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/michelin/avro-xml-mapper/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.michelin/avro-xml-mapper?style=for-the-badge&logo=apache-maven&label=Maven%20Central)](https://central.sonatype.com/search?q=com.michelin.avro-xml-mapper&sort=name)
 ![Supported Java Versions](https://img.shields.io/badge/Java-17--21--25-blue.svg?style=for-the-badge&logo=openjdk)
+[![Avro Version](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fmichelin%2Favro-xml-mapper%2Fmain%2Fpom.xml&query=%2F*%5Blocal-name()%3D'project'%5D%2F*%5Blocal-name()%3D'properties'%5D%2F*%5Blocal-name()%3D'avro.version'%5D%2Ftext()&style=for-the-badge&logo=apacheavro&label=version)](https://github.com/michelin/avro-xml-mapper/blob/main/pom.xml)
 [![GitHub Stars](https://img.shields.io/github/stars/michelin/avro-xml-mapper?logo=github&style=for-the-badge)](https://github.com/michelin/avro-xml-mapper)
 [![SonarCloud Coverage](https://img.shields.io/sonar/coverage/michelin_avro-xml-mapper?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge)](https://sonarcloud.io/component_measures?id=michelin_avro-xml-mapper&metric=coverage&view=list)
 [![SonarCloud Tests](https://img.shields.io/sonar/tests/michelin_avro-xml-mapper/main?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/component_measures?metric=tests&view=list&id=michelin_avro-xml-mapper)
@@ -403,4 +404,5 @@ We welcome contributions from the community! Before you get started, please take
 our [contribution guide](https://github.com/michelin/avro-xml-mapper/blob/main/CONTRIBUTING.md) to learn about our guidelines
 
 and best practices. We appreciate your help in making Avro XML Mapper a better tool for everyone.
+
 
