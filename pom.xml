@@ -66,7 +66,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>michelin</sonar.organization>
         <sonar.projectKey>michelin_avro-xml-mapper</sonar.projectKey>
-        <spotless-maven-plugin.version>3.2.0</spotless-maven-plugin.version>
+        <spotless-maven-plugin.version>3.2.1</spotless-maven-plugin.version>
         <xmlunit.version>1.6</xmlunit.version>
     </properties>
 
