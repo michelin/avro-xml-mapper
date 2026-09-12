@@ -53,15 +53,15 @@
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <junit-jupiter.version>6.1.3</junit-jupiter.version>
-        <lombok.version>1.18.46</lombok.version>
+        <lombok.version>1.18.48</lombok.version>
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
         <maven.compiler.java.version>17</maven.compiler.java.version>
         <palantir.version>2.80.0</palantir.version>
-        <slf4j-api.version>2.0.18</slf4j-api.version>
+        <slf4j-api.version>2.0.19</slf4j-api.version>
         <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>michelin</sonar.organization>
