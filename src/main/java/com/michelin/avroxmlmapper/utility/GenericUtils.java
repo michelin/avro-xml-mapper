@@ -40,8 +40,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.Schema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -50,12 +51,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /** Generic utility class for conversions. */
-@Slf4j
 public final class GenericUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(GenericUtils.class);
+
+    /** Private constructor. */
     private GenericUtils() {}
 
     /**
-     * Get a new XPath instance.
+     * Gets a new XPath instance.
      *
      * @return A new XPath instance
      */
@@ -64,10 +67,10 @@ public final class GenericUtils {
     }
 
     /**
-     * Get the XML namespaces from a given XML schema
+     * Gets the XML namespaces from a schema.
      *
      * @param schema The current XML schema
-     * @param namespaceSelector selector for multiple namespaces mapped in avro
+     * @param namespaceSelector Selector for multiple namespaces mapped in Avro.
      * @return A map containing the namespaces
      */
     @SuppressWarnings("unchecked")
@@ -76,7 +79,7 @@ public final class GenericUtils {
     }
 
     /**
-     * Get the default XML namespaces from a given XML schema ("xmlNamespaces" root attribute)
+     * Gets the default XML namespaces from a schema's {@code xmlNamespaces} root attribute.
      *
      * @param schema The current XML schema
      * @return A map containing the namespaces
@@ -89,9 +92,9 @@ public final class GenericUtils {
     /**
      * Converts a document to a String.
      *
-     * @param document the document to convert
-     * @return the result string
-     * @throws TransformerException if the conversion fails
+     * @param document The document to convert.
+     * @return The result string.
+     * @throws TransformerException If the conversion fails.
      */
     public static String documentToString(Document document) throws TransformerException {
         TransformerFactory factory = TransformerFactory.newInstance();
@@ -108,11 +111,12 @@ public final class GenericUtils {
     }
 
     /**
-     * Evaluate a string value as a org.w3c.dom.Document and update namespaces according to the target.
+     * Parses a string as a {@link Document} and updates its namespaces.
      *
-     * @param strValue the string value to evaluate as a Document
-     * @param xmlNamespacesMap the target of namespaces (key : prefix ; value : URI), if null no update on namespaces.
-     * @return the evaluated xml Document
+     * @param strValue The string value to evaluate as a Document.
+     * @param xmlNamespacesMap The target namespaces map (key: prefix, value: URI). If null, no namespace update is
+     *     applied.
+     * @return The evaluated XML Document.
      */
     public static Document stringToDocument(String strValue, Map<String, String> xmlNamespacesMap) {
         Document document;
@@ -120,14 +124,14 @@ public final class GenericUtils {
             // If no xmlNamespacesMap is provided, log a warning and initialize it
             if (xmlNamespacesMap == null) {
                 xmlNamespacesMap = new HashMap<>();
-                log.warn("No xmlNamespaces attribute provided in the avsc!");
+                LOG.warn("No xmlNamespaces attribute provided in the avsc!");
             }
 
             // If no default namespace is present in the document, emulate one
             if (xmlNamespacesMap.get("null") == null) {
                 // log a warning mentioning that no default xml namespace has been defined in the avsc, which could be
                 // normal if no xml namespace is used / defined in the xml
-                log.warn(
+                LOG.warn(
                         "No default xml namespace has been defined in the avsc, which could be normal if no xmlns is used / defined in the xml but could also be a mistake from the user");
 
                 // Add a stub default namespace to the document root element to avoid NPE when evaluating xPath
@@ -147,7 +151,7 @@ public final class GenericUtils {
             document = builder.parse(is);
 
             // build a reverse map of namespaces : URI (K) -> list of prefixes (V)
-            var namespacePrefixesByURI =
+            Map<String, List<String>> namespacePrefixesByURI =
                     XmlToAvroUtils.extractNamespaces(document.getDocumentElement(), new HashMap<>());
 
             // Remove all namespace definitions
@@ -167,6 +171,12 @@ public final class GenericUtils {
         }
     }
 
+    /**
+     * Adds a default namespace to the root element when none is present.
+     *
+     * @param xml The XML content to update.
+     * @return The XML content containing a default namespace declaration.
+     */
     private static String addDefaultXMLNS(String xml) {
         int rootStart;
         int rootEnd;
@@ -194,19 +204,19 @@ public final class GenericUtils {
     }
 
     /**
-     * Handle exception for Node xPath evaluation
+     * Evaluates an XPath expression and returns the matching nodes.
      *
-     * @param node the source node to evaluate
-     * @param orphanNode the source node to evaluate without parent nodes
-     * @param xPathExpression the xPathExpression to match
-     * @param namespaceContext the namespace context
-     * @return the list of matched nodes
+     * @param node The source node to evaluate.
+     * @param orphanNode The source node to evaluate without parent nodes.
+     * @param xPathExpression The XPath expression to match.
+     * @param namespaceContext The namespace context.
+     * @return The list of matched nodes.
      */
     public static NodeList xPathNodeListEvaluation(
             Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
         NodeList result;
 
-        var nodeToParse = node;
+        Node nodeToParse = node;
 
         // Isolate current node from the whole document for performance when full context is not necessary
         if (!xPathExpression.contains("//")) {
@@ -225,17 +235,17 @@ public final class GenericUtils {
     }
 
     /**
-     * Handle exception for Node xPath evaluation
+     * Evaluates an XPath expression and returns the matching values.
      *
      * @param node The source node to evaluate
-     * @param orphanNode The node to evaluate without parent nodes
-     * @param xPathExpression The xPathExpression to match
+     * @param orphanNode The node to evaluate without parent nodes.
+     * @param xPathExpression The XPath expression to match.
      * @param namespaceContext The namespace context
-     * @return The list of matched values
+     * @return The list of matched values.
      */
     public static List<String> xPathStringListEvaluation(
             Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
-        var nodeList = xPathNodeListEvaluation(node, orphanNode, xPathExpression, namespaceContext);
+        NodeList nodeList = xPathNodeListEvaluation(node, orphanNode, xPathExpression, namespaceContext);
         return asList(nodeList).stream()
                 .map(Node::getTextContent)
                 .filter(s -> !s.isEmpty())
@@ -243,19 +253,19 @@ public final class GenericUtils {
     }
 
     /**
-     * Handle exception for Node xPath evaluation
+     * Evaluates an XPath expression and returns the matching value.
      *
-     * @param node the source node to evaluate
-     * @param orphanNode the source node to evaluate without parent context
-     * @param xPathExpression the xPathExpression to match
-     * @param namespaceContext the namespaceContext
-     * @return the list of matched nodes
+     * @param node The source node to evaluate.
+     * @param orphanNode The source node to evaluate without parent context.
+     * @param xPathExpression The XPath expression to match.
+     * @param namespaceContext The namespace context.
+     * @return The matched value.
      */
     public static String xPathStringEvaluation(
             Node node, Node orphanNode, String xPathExpression, NamespaceContext namespaceContext) {
         String result;
 
-        var nodeToParse = node;
+        Node nodeToParse = node;
 
         // Isolate current node from the whole document for performance when full context is not necessary
         if (!xPathExpression.contains("//")) {
@@ -274,10 +284,10 @@ public final class GenericUtils {
     }
 
     /**
-     * Build a simple NamespaceContext in order to make Xpath usable for a document
+     * Builds a simple {@link NamespaceContext} for a document.
      *
-     * @param document the document to analyze
-     * @return the namespace context
+     * @param document The document to analyze.
+     * @return The namespace context.
      */
     public static NamespaceContext getNamespaceContext(Document document) {
         NamedNodeMap mapAttributes = document.getDocumentElement().getAttributes();
@@ -297,16 +307,34 @@ public final class GenericUtils {
         }
 
         return new NamespaceContext() {
+            /**
+             * Gets the namespace URI associated with a prefix.
+             *
+             * @param prefix The namespace prefix.
+             * @return The namespace URI.
+             */
             @Override
             public String getNamespaceURI(String prefix) {
                 return mapPrefixes.get(prefix);
             }
 
+            /**
+             * Gets one prefix associated with a namespace URI.
+             *
+             * @param namespaceURI The namespace URI.
+             * @return The matching prefix.
+             */
             @Override
             public String getPrefix(String namespaceURI) {
                 return null;
             }
 
+            /**
+             * Gets all prefixes associated with a namespace URI.
+             *
+             * @param namespaceURI The namespace URI.
+             * @return The matching prefixes iterator.
+             */
             @Override
             public Iterator<String> getPrefixes(String namespaceURI) {
                 return null;
@@ -315,21 +343,21 @@ public final class GenericUtils {
     }
 
     /**
-     * Convert a NodeList to an IterableList of Node
+     * Converts a {@link NodeList} to a list of nodes.
      *
-     * @param n the list to convert
-     * @return an equivalent List of Node
+     * @param n The list to convert.
+     * @return An equivalent List of Node.
      */
     public static List<Node> asList(NodeList n) {
         return n.getLength() == 0 ? Collections.emptyList() : new NodeListWrapper(n);
     }
 
     /**
-     * Try to parse a string value to the Java type based on Schema type.
+     * Parses a string value according to its schema type.
      *
-     * @param fieldType the schema type
-     * @param value the string value
-     * @return the result of parsing. In case of Exception (for ex NumberFormatException) the result is null.
+     * @param fieldType The schema type.
+     * @param value The string value.
+     * @return The result of parsing. In case of exception (for example NumberFormatException), the result is null.
      */
     public static Object parseValue(Schema.Type fieldType, String value) {
         Object result;
@@ -350,10 +378,9 @@ public final class GenericUtils {
     }
 
     /**
-     * Frequently the type is defined in avsc with this pattern : "type" : [ "null", "realType"] to allow a null value.
-     * This pattern creates a UNION type, with two subtypes. This method extracts the non-null type ("real type").
+     * Extracts the non-null type from a nullable union schema.
      *
-     * @param schema the schema node which can be a UNION
+     * @param schema The schema node, which can be a UNION.
      * @return The non-null type
      */
     public static Optional<Schema> extractRealType(Schema schema) {
@@ -364,18 +391,36 @@ public final class GenericUtils {
                         .findFirst();
     }
 
-    /** Custom class allowing the conversion of NodeList to iterable List of Node */
+    /** Wraps a {@link NodeList} as a list of nodes. */
     public static final class NodeListWrapper extends AbstractList<Node> implements RandomAccess {
         private final NodeList list;
 
+        /**
+         * Constructs a wrapper around a {@link NodeList}.
+         *
+         * @param l The wrapped node list.
+         */
         NodeListWrapper(NodeList l) {
             list = l;
         }
 
+        /**
+         * Gets the node at a given index.
+         *
+         * @param index The position of the node to retrieve.
+         * @return The node at the requested index.
+         */
+        @Override
         public Node get(int index) {
             return list.item(index);
         }
 
+        /**
+         * Gets the number of wrapped nodes.
+         *
+         * @return The number of wrapped nodes.
+         */
+        @Override
         public int size() {
             return list.getLength();
         }

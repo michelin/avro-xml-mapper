@@ -29,17 +29,17 @@ import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.w3c.dom.Document;
 
-/** Utility Class for XML parsing (Xpath) */
+/** Utility class for XML parsing with XPath. */
 public final class AvroXmlMapper {
     private static final String GET_CLASS_SCHEMA_METHOD = "getClassSchema";
 
+    /** Private constructor. */
     private AvroXmlMapper() {}
 
     /**
-     * Converts an XML string into a SpecificRecordBase object. The mapping is based on the "xpath" property defined for
-     * each of the fields in the original avsc file.
+     * Converts an XML string to a {@link SpecificRecordBase} using each field's {@code xpath} property.
      *
-     * <p>See README.md for more details.
+     * <p>See the README for details.
      *
      * @param stringDocument The XML string to convert
      * @param clazz The Avro object to convert to
@@ -53,7 +53,7 @@ public final class AvroXmlMapper {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Schema schema =
                 (Schema) (clazz.getDeclaredMethod(GET_CLASS_SCHEMA_METHOD).invoke(null));
-        var document = stringToDocument(stringDocument, xmlNamespaces(schema));
+        Document document = stringToDocument(stringDocument, xmlNamespaces(schema));
         return XmlToAvroUtils.convert(
                 document.getDocumentElement(),
                 document.getDocumentElement(),
@@ -64,14 +64,13 @@ public final class AvroXmlMapper {
     }
 
     /**
-     * Converts an XML string into a SpecificRecordBase object. The mapping is based on the chosen xpathSelector
-     * property defined for each of the fields in the original avsc file. See README.md for more details.
+     * Converts an XML string to a {@link SpecificRecordBase} using the selected XPath property.
      *
      * @param stringDocument The XML string to convert
      * @param clazz The Avro object to convert to
-     * @param xpathSelector The xpathSelector property used to search for the xpathMapping in the Avro definition
+     * @param xpathSelector The XPath selector property used to find mappings in the Avro definition.
      * @param <T> The type of the Avro object
-     * @return the SpecificRecordBase object.
+     * @return The SpecificRecordBase object.
      * @throws NoSuchMethodException If the method getClassSchema is not found
      * @throws InvocationTargetException If the method getClassSchema cannot be invoked
      * @throws IllegalAccessException If the method getClassSchema cannot be accessed
@@ -81,7 +80,7 @@ public final class AvroXmlMapper {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Schema schema =
                 (Schema) (clazz.getDeclaredMethod(GET_CLASS_SCHEMA_METHOD).invoke(null));
-        var document = stringToDocument(stringDocument, xmlNamespaces(schema));
+        Document document = stringToDocument(stringDocument, xmlNamespaces(schema));
         return XmlToAvroUtils.convert(
                 document.getDocumentElement(),
                 document.getDocumentElement(),
@@ -92,16 +91,15 @@ public final class AvroXmlMapper {
     }
 
     /**
-     * Converts an XML string into a SpecificRecordBase object. The mapping is based on the chosen xpathSelector
-     * property defined for each of the fields in the original avsc file. See README.md for more details.
+     * Converts an XML string to a {@link SpecificRecordBase} using the selected XPath and namespace properties.
      *
      * @param stringDocument The XML string to convert
      * @param clazz The Avro object to convert to
-     * @param xpathSelector The xpathSelector property used to search for the xpathMapping in the Avro definition
-     * @param xmlNamespacesSelector Name of the variable defining the xmlNamespaces of the avsc file that needs to be
-     *     used for unifying namespace definitions
+     * @param xpathSelector The XPath selector property used to find mappings in the Avro definition.
+     * @param xmlNamespacesSelector Name of the variable defining the XML namespaces in the AVSC file for unifying
+     *     namespace definitions.
      * @param <T> The type of the Avro object
-     * @return the SpecificRecordBase object.
+     * @return The SpecificRecordBase object.
      * @throws NoSuchMethodException If the method getClassSchema is not found
      * @throws InvocationTargetException If the method getClassSchema cannot be invoked
      * @throws IllegalAccessException If the method getClassSchema cannot be accessed
@@ -111,7 +109,7 @@ public final class AvroXmlMapper {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Schema schema =
                 (Schema) (clazz.getDeclaredMethod(GET_CLASS_SCHEMA_METHOD).invoke(null));
-        var document = stringToDocument(stringDocument, xmlNamespaces(schema, xmlNamespacesSelector));
+        Document document = stringToDocument(stringDocument, xmlNamespaces(schema, xmlNamespacesSelector));
         return XmlToAvroUtils.convert(
                 document.getDocumentElement(),
                 document.getDocumentElement(),
@@ -122,8 +120,8 @@ public final class AvroXmlMapper {
     }
 
     /**
-     * Create an XML in String format from a SpecificRecordBase, using default "xpath" and "xmlNamespaces" properties
-     * defined in the Avro model to build the XML structure.
+     * Creates an XML string from a {@link SpecificRecordBase} using the default {@code xpath} and {@code xmlNamespaces}
+     * properties.
      *
      * @param message The SpecificRecordBase containing the entire data to parse in XML
      * @return The XML in String format
@@ -134,11 +132,11 @@ public final class AvroXmlMapper {
     }
 
     /**
-     * Create an XML in String format from a SpecificRecordBase, using the provided xpathSelector and default
-     * "xmlNamespaces" properties defined in the Avro model to build the XML structure.
+     * Creates an XML string from a {@link SpecificRecordBase} using the selected XPath and default
+     * {@code xmlNamespaces} properties.
      *
      * @param message The SpecificRecordBase containing the entire data to parse in XML
-     * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
+     * @param xpathSelector Name of the variable defining the XPath in the AVSC file.
      * @return The XML in String format
      * @throws TransformerException If the transformation fails
      */
@@ -148,13 +146,11 @@ public final class AvroXmlMapper {
     }
 
     /**
-     * Create an XML in String format from a SpecificRecordBase, using the provided xpathSelector and
-     * xmlNamespacesSelector properties defined in the Avro model to build the XML structure.
+     * Creates an XML string from a {@link SpecificRecordBase} using the selected XPath and namespace properties.
      *
      * @param message The SpecificRecordBase containing the entire data to parse in XML
-     * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
-     * @param xmlNamespacesSelector Name of the variable defining the xmlNamespaces of the avsc file that needs to be
-     *     used
+     * @param xpathSelector Name of the variable defining the XPath in the AVSC file.
+     * @param xmlNamespacesSelector Name of the variable defining the XML namespaces in the AVSC file.
      * @return The XML in String format
      * @throws TransformerException If the transformation fails
      */
@@ -164,15 +160,11 @@ public final class AvroXmlMapper {
         return documentToString(createDocumentFromAvro(message, xpathSelector, xmlNamespacesSelector));
     }
 
-    /* ********************************** */
-    /* Build an XML document from an Avro */
-    /* ********************************** */
-
     /**
-     * Create a Document from a SpecificRecordBase, using default "xpath" and "xmlNamespaces" properties defined in the
-     * Avro model to build the XML structure.
+     * Creates an XML document from a {@link SpecificRecordBase} using the default {@code xpath} and
+     * {@code xmlNamespaces} properties.
      *
-     * @param message The global SpecificRecordBase containing the entire data to parse in XML
+     * @param message The SpecificRecordBase containing the data to parse as XML.
      * @return The document produced
      */
     public static Document convertAvroToXmlDocument(SpecificRecordBase message) {
@@ -180,10 +172,10 @@ public final class AvroXmlMapper {
     }
 
     /**
-     * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
+     * Creates an XML document from a {@link SpecificRecordBase} using the selected XPath property.
      *
      * @param message The SpecificRecordBase containing the entire data to parse in XML
-     * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
+     * @param xpathSelector Name of the variable defining the XPath in the AVSC file.
      * @return The document produced
      */
     public static Document convertAvroToXmlDocument(SpecificRecordBase message, String xpathSelector) {
@@ -191,13 +183,11 @@ public final class AvroXmlMapper {
     }
 
     /**
-     * Create a Document from a SpecificRecordBase, using the provided xpathSelector and xmlNamespacesSelector
-     * properties defined in the Avro model to build the XML structure.
+     * Creates an XML document from a {@link SpecificRecordBase} using the selected XPath and namespace properties.
      *
      * @param message The SpecificRecordBase containing the entire data to parse in XML
-     * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
-     * @param xmlNamespaceSelector Name of the variable defining the xmlNamespaces of the avsc file that needs to be
-     *     used
+     * @param xpathSelector Name of the variable defining the XPath in the AVSC file.
+     * @param xmlNamespaceSelector Name of the variable defining the XML namespaces in the AVSC file.
      * @return The document produced
      */
     public static Document convertAvroToXmlDocument(
