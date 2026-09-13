@@ -467,6 +467,7 @@ public final class AvroToXmlUtils {
      *
      * @param fieldType The schema type
      * @param value The field value as typed Object
+     * @param schema The field schema
      * @return The parsed value with type-specific formatting.
      */
     private static String formatStringWithSchemaType(Schema.Type fieldType, Object value, Schema schema) {
