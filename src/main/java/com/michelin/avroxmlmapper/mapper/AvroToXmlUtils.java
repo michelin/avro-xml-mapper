@@ -40,18 +40,19 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.*;
 
-/** Utility class for Avro to XML conversion */
+/** Utility class for Avro-to-XML conversion. */
 public final class AvroToXmlUtils {
 
+    /** Private constructor. */
     private AvroToXmlUtils() {}
 
     /**
-     * Create a Document from a SpecificRecordBase, using xpath property (Avro model) to build the XML structure.
+     * Creates an XML document from a {@link SpecificRecordBase} using the selected XPath and namespace properties.
      *
-     * @param message the global SpecificRecordBase containing the entire data to parse in XML
-     * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
-     * @param namespaceSelector Name of the variable defining xml namespaces of avsc file corresponding to record
-     * @return the document produced
+     * @param message The global SpecificRecordBase containing the entire data to parse in XML.
+     * @param xpathSelector Name of the variable defining the XPath in the AVSC file.
+     * @param namespaceSelector Name of the variable defining the XML namespaces for the record.
+     * @return The document produced.
      */
     public static Document createDocumentFromAvro(
             SpecificRecordBase message, String xpathSelector, String namespaceSelector) {
@@ -79,7 +80,7 @@ public final class AvroToXmlUtils {
                     .getProp(xpathSelector)
                     .substring(1); // The first character, for the xpath of rootElement,// is '/'
 
-            var rootElement = document.createElementNS(
+            Element rootElement = document.createElementNS(
                     mapNamespaces.get(AvroToXmlUtils.getPrefix(rootElementName)), rootElementName);
 
             mapNamespaces.forEach((k, v) -> rootElement.setAttribute(
@@ -103,13 +104,13 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * Build all child nodes of an element (with type record in avsc) and return it as list.
+     * Builds all child nodes of a record element.
      *
-     * @param message the record corresponding to the parent element
-     * @param document the target document (necessary to create nodes)
-     * @param namespaces map containing all namespaces (K : prefix ; V : URI)
-     * @param xpathSelector Name of the variable defining the xpath of the avsc file that needs to be used
-     * @return the list of all child nodes built
+     * @param message The record corresponding to the parent element.
+     * @param document The target document (necessary to create nodes).
+     * @param namespaces Map containing all namespaces (K: prefix; V: URI).
+     * @param xpathSelector Name of the variable defining the XPath in the AVSC file.
+     * @return The list of all child nodes built.
      */
     private static List<Node> buildChildNodes(
             SpecificRecordBase message, Document document, Map<String, String> namespaces, String xpathSelector) {
@@ -130,7 +131,7 @@ public final class AvroToXmlUtils {
                     xpath = field.getProp(xpathSelector);
 
                     if (xpath != null) {
-                        var subRecord = (SpecificRecordBase) message.get(field.name());
+                        SpecificRecordBase subRecord = (SpecificRecordBase) message.get(field.name());
                         if (subRecord != null) {
                             Node node = createNode(xpath, childNodes, document, namespaces);
                             buildChildNodes(subRecord, document, namespaces, xpathSelector)
@@ -147,7 +148,7 @@ public final class AvroToXmlUtils {
                     xpath = field.getProp(xpathSelector);
 
                     if (xpath != null) {
-                        var list = (List) message.get(field.name());
+                        List<?> list = (List<?>) message.get(field.name());
 
                         if (list != null && !list.isEmpty()) {
                             Optional<Schema> schema = extractRealType(elementSchema);
@@ -182,7 +183,7 @@ public final class AvroToXmlUtils {
                     break;
                 default:
                     // all other = primitive types
-                    var xpathList = getXpathList(field, xpathSelector);
+                    List<String> xpathList = getXpathList(field, xpathSelector);
 
                     String fieldValue = message.get(field.name()) != null
                             ? message.get(field.name()).toString()
@@ -201,7 +202,7 @@ public final class AvroToXmlUtils {
                         });
                     } else {
                         // if field value is not there, check for the "keepEmptyTag" attribute
-                        var keepEmptyTag = field.getObjectProp("keepEmptyTag");
+                        Object keepEmptyTag = field.getObjectProp("keepEmptyTag");
                         if (keepEmptyTag != null && (boolean) keepEmptyTag) {
                             xpathList.forEach(x -> createNode(x, childNodes, document, namespaces));
                         }
@@ -213,6 +214,17 @@ public final class AvroToXmlUtils {
         return childNodes;
     }
 
+    /**
+     * Builds map child nodes from field metadata.
+     *
+     * @param message The current record.
+     * @param document The target document.
+     * @param childNodes The list receiving generated nodes.
+     * @param namespaces The namespace map.
+     * @param field The Avro field.
+     * @param fieldType The field schema.
+     * @param xpathSelector The XPath selector property name.
+     */
     private static void buildMapChildNodes(
             SpecificRecordBase message,
             Document document,
@@ -267,10 +279,20 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * xpath = "root#key#value"
+     * Builds map entries using {@code root#key#value}.
      *
      * <p><mapMarkup> <key>key1</key> <value>value</value> </mapMarkup> <mapMarkup> <key>key2</key> <value>value</value>
      * </mapMarkup>
+     *
+     * @param message The current record.
+     * @param document The target document.
+     * @param childNodes The list receiving generated nodes.
+     * @param namespaces The namespace map.
+     * @param field The map field.
+     * @param valueSchema The map value schema.
+     * @param rootXpath The root XPath.
+     * @param keyXpath The key XPath.
+     * @param valueXpath The value XPath.
      */
     private static void buildMapChildNodesFromScenario1(
             SpecificRecordBase message,
@@ -283,11 +305,11 @@ public final class AvroToXmlUtils {
             String keyXpath,
             String valueXpath) {
         if (valueSchema.getType() == Schema.Type.STRING) {
-            var map = (Map<String, String>) message.get(field.name());
+            Map<String, String> map = (Map<String, String>) message.get(field.name());
             if (map != null) {
-                for (var keyValue : map.entrySet()) {
+                for (Map.Entry<String, String> keyValue : map.entrySet()) {
                     Node node = createNode(rootXpath, childNodes, document, namespaces);
-                    var hackEmptyList = new ArrayList<Node>();
+                    List<Node> hackEmptyList = new ArrayList<>();
                     Node keyNode = createNode(keyXpath, hackEmptyList, document, namespaces);
                     Node valueNode = createNode(valueXpath, hackEmptyList, document, namespaces);
                     keyNode.appendChild(document.createTextNode(
@@ -305,9 +327,19 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * xpath="root/entry#@key#."
+     * Builds map entries using {@code root/entry#@key#.}.
      *
      * <p><mapMarkup> <entry key="key1">value</entry> <entry key="key2">value</entry> </mapMarkup>
+     *
+     * @param message The current record.
+     * @param document The target document.
+     * @param childNodes The list receiving generated nodes.
+     * @param namespaces The namespace map.
+     * @param field The map field.
+     * @param valueSchema The map value schema.
+     * @param rootXpath The root XPath.
+     * @param keyXpath The key XPath.
+     * @param valueXpath The value XPath.
      */
     private static void buildMapChildNodesFromScenario2(
             SpecificRecordBase message,
@@ -324,9 +356,9 @@ public final class AvroToXmlUtils {
                     "Using a valueXpath different from '.' while using an attribute key is not yet supported.");
         }
         if (valueSchema.getType() == Schema.Type.STRING) {
-            var map = (Map<String, String>) message.get(field.name());
+            Map<String, String> map = (Map<String, String>) message.get(field.name());
             if (map != null) {
-                for (var keyValue : map.entrySet()) {
+                for (Map.Entry<String, String> keyValue : map.entrySet()) {
                     Node entry = createNode(rootXpath, childNodes, document, namespaces);
                     addDynamicAttribute(entry, keyXpath.replace("@", ""), keyValue.getKey());
                     entry.appendChild(document.createTextNode(
@@ -340,19 +372,14 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * This method creates a node according to the xpath provided. If the xpath contains more than one level, for each
-     * intermediate level : * if the intermediate node already exists in the list, it is retrieved * if the intermediate
-     * node does not exist in the list, it is created The new node is appended to the intermediate node (retrieved or
-     * created). This method uses filters based on attributes to set attributes when necessary * Note : filters must
-     * respect constraints : only one value per attribute (which excludes "!=" operator), only "and" operator between
-     * conditions, not multi-levels filter (like "[element/@attribute='foo']") The type of the returned node can be
-     * element or attribute
+     * Creates a node from the provided XPath. Intermediate nodes are reused or created as needed, and attribute filters
+     * are applied. Filters support one value per attribute, the {@code and} operator, and no nested levels.
      *
-     * @param xpath the relative xpath with all intermediate elements, including attribute filters
-     * @param nodeList the nodes already created ; all nodes created by this method are added to this list
-     * @param document the target document (necessary to create nodes)
-     * @param namespaces map containing all namespaces (K : prefix ; V : URI)
-     * @return the node created
+     * @param xpath The relative xpath with all intermediate elements, including attribute filters.
+     * @param nodeList The nodes already created. All nodes created by this method are added to this list.
+     * @param document The target document (necessary to create nodes).
+     * @param namespaces Map containing all namespaces (K: prefix; V: URI).
+     * @return The node created.
      */
     public static Node createNode(
             String xpath, List<Node> nodeList, Document document, Map<String, String> namespaces) {
@@ -410,9 +437,16 @@ public final class AvroToXmlUtils {
         return resultNode;
     }
 
+    /**
+     * Gets the list of xpath expressions defined for a field.
+     *
+     * @param field The field to inspect.
+     * @param xpathSelector The xpath property selector.
+     * @return The list of XPath expressions.
+     */
     private static List<String> getXpathList(Schema.Field field, String xpathSelector) {
         Object xpath1 = field.getObjectProp(xpathSelector);
-        var xpathList = new ArrayList<String>();
+        List<String> xpathList = new ArrayList<>();
 
         if (xpath1 == null || JsonProperties.NULL_VALUE.equals(xpath1)) {
             return xpathList;
@@ -429,11 +463,11 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * Try to parse an Object value to a String depending on Schema type (special rules to convert a float to String).
+     * Parses an object value to a string according to its schema type.
      *
      * @param fieldType The schema type
      * @param value The field value as typed Object
-     * @return the result of parsing, with formatting specificities.
+     * @return The parsed value with type-specific formatting.
      */
     private static String formatStringWithSchemaType(Schema.Type fieldType, Object value, Schema schema) {
         String result;
@@ -519,10 +553,22 @@ public final class AvroToXmlUtils {
         return result;
     }
 
+    /**
+     * Adds a dynamic attribute to an XML element.
+     *
+     * @param node The target element node.
+     * @param attributeKey The attribute name.
+     * @param value The attribute value.
+     */
     private static void addDynamicAttribute(Node node, String attributeKey, String value) {
         ((Element) node).setAttribute(attributeKey, value);
     }
 
+    /**
+     * Removes internal helper attributes from a node tree.
+     *
+     * @param node The node to clean.
+     */
     private static void removeSpecialAttributes(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             ((Element) node).removeAttribute(XML_ATTRIBUTE_POSITION);
@@ -531,22 +577,23 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * Compares a node, including attributes, with the xpath level
+     * Compares a node, including its attributes, with an XPath level.
      *
-     * @param node the node to compare
-     * @param xmlLevel the xpath level
-     * @return true if matching, false otherwise
+     * @param node The node to compare.
+     * @param xmlLevel The xpath level.
+     * @return True if matching, otherwise false.
      */
     private static boolean isNodeMatching(Node node, String xmlLevel) {
         if (node.getNodeName().equals(extractElementName(xmlLevel))) { // same element name
-            var xmlSubLevel = getSubLevelFromFilter(xmlLevel);
+            String xmlSubLevel = getSubLevelFromFilter(xmlLevel);
             if (!xmlSubLevel.isEmpty()) {
                 for (Node childNode : asList(node.getChildNodes())) {
                     if (isNodeMatching(childNode, xmlSubLevel)) return true;
                 }
             } else {
                 NamedNodeMap nodeAttributes = node.getAttributes();
-                for (var attr : extractAttributes(xmlLevel).entrySet()) {
+                for (Map.Entry<String, String> attr :
+                        extractAttributes(xmlLevel).entrySet()) {
                     Node nodeAttribute = nodeAttributes.getNamedItem(attr.getKey());
                     if (nodeAttribute == null || !nodeAttribute.getNodeValue().equals(attr.getValue())) {
                         return false;
@@ -559,34 +606,41 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * This method create an Element with optional attributes based on xpath filter (included in xmlLevel)
+     * Creates an element with optional attributes from an XPath filter.
      *
-     * @param xmlLevel the element name and, optionally, a filter based on attributes
-     * @param document the document (necessary to create element)
-     * @param namespaces the map of namespaces
-     * @return the node created
+     * @param xmlLevel The element name and, optionally, a filter based on attributes.
+     * @param document The document (necessary to create element).
+     * @param namespaces The map of namespaces.
+     * @return The node created.
      */
     private static Node createElement(String xmlLevel, Document document, Map<String, String> namespaces) {
         Node resultNode;
-        var xmlSubLevel = getSubLevelFromFilter(xmlLevel);
+        String xmlSubLevel = getSubLevelFromFilter(xmlLevel);
         if (!xmlSubLevel.isEmpty()) {
             resultNode = createElement(extractElementName(xmlLevel), document, namespaces);
         } else {
             String elementName = extractElementName(xmlLevel);
             resultNode = document.createElementNS(namespaces.get(getPrefix(elementName)), elementName);
-            for (var attribute : extractAttributes(xmlLevel).entrySet()) {
+            for (Map.Entry<String, String> attribute :
+                    extractAttributes(xmlLevel).entrySet()) {
                 ((Element) resultNode).setAttribute(attribute.getKey(), attribute.getValue());
             }
         }
         return resultNode;
     }
 
+    /**
+     * Extracts a nested level filter from an xpath level.
+     *
+     * @param xmlLevel The xpath level to inspect.
+     * @return The extracted sub-level expression.
+     */
     private static String getSubLevelFromFilter(String xmlLevel) {
-        var subLevel = new StringBuilder();
+        StringBuilder subLevel = new StringBuilder();
         if (xmlLevel.contains("[")) {
             String filter = xmlLevel.substring(xmlLevel.indexOf('[') + 1, xmlLevel.indexOf(']'));
             if (!filter.startsWith("@") && !filter.matches("\\d+")) {
-                var subLevels = filter.split(REGEX_SPLIT_XPATH_LEVELS);
+                String[] subLevels = filter.split(REGEX_SPLIT_XPATH_LEVELS);
                 subLevel.append(subLevels[0]);
                 if (subLevels.length > 1) {
                     subLevel.append("[").append(subLevels[1].substring(1));
@@ -601,11 +655,11 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * Extract element name from the xpath level. For example, if xmlLevel = foo:bar[@toto='titi'] the result is
-     * foo:bar.
+     * Extracts the element name from an XPath level. For example, {@code foo:bar[@toto='titi']} produces
+     * {@code foo:bar}.
      *
-     * @param xmlLevel the xmlLevel from which the name is extracted
-     * @return the element name
+     * @param xmlLevel The XPath level from which the name is extracted.
+     * @return The element name.
      */
     private static String extractElementName(String xmlLevel) {
         if (xmlLevel.contains("[")) { // element with filter on attribute(s)
@@ -616,10 +670,10 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * Extract the prefix (namespace) of an element name.
+     * Extracts the namespace prefix from an element name.
      *
-     * @param qualifiedName the element name, including the prefix
-     * @return the prefix or an empty string in no prefix is present
+     * @param qualifiedName The element name, including the prefix.
+     * @return The prefix, or an empty string when no prefix is present.
      */
     private static String getPrefix(String qualifiedName) {
         String[] parts = qualifiedName.split(":");
@@ -631,11 +685,10 @@ public final class AvroToXmlUtils {
     }
 
     /**
-     * Extract attributes from filters contained in the xpath level. The result is a Map of K = attributeName ; V =
-     * attributeValue
+     * Extracts attributes from filters in an XPath level.
      *
-     * @param xmlLevel the fragment of xpath
-     * @return the result Map of attributes
+     * @param xmlLevel The XPath fragment.
+     * @return The resulting map of attributes.
      */
     private static Map<String, String> extractAttributes(String xmlLevel) {
         Map<String, String> attributes = new HashMap<>(); // K = attributeName ; V = attributeValue

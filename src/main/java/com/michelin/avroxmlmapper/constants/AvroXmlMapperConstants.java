@@ -21,7 +21,7 @@ package com.michelin.avroxmlmapper.constants;
 /** Constants for the AvroXmlMapper library. */
 public final class AvroXmlMapperConstants {
 
-    /** Default xpath property name. */
+    /** Default XPath property name. */
     public static final String XPATH_DEFAULT = "xpath";
 
     /**
@@ -29,17 +29,14 @@ public final class AvroXmlMapperConstants {
      *
      * <p>The value assigned to this property contains all the namespaces used in the XML document.
      *
-     * <p>Namespaces keys have to match the ones used in the xpath of the AVSC fields, but not necessarily the ones
-     * defined in the XML document.
+     * <p>Namespace keys must match those used in the XPath of the AVSC fields, but not necessarily those defined in the
+     * XML document.
      *
      * <p>Namespaces values (URI) have to match the ones defined in the XML document.
      */
     public static final String XML_NAMESPACE_SELECTOR_DEFAULT = "xmlNamespaces";
 
-    /**
-     * Property name for the root of a map entry. The value assigned to this property is the xpath to the root
-     * (recurring element) of the map entry.
-     */
+    /** Property name for the root of a map entry. Its value is the XPath to the recurring root element. */
     public static final String XPATH_MAP_ROOT_PROPERTY_NAME = "rootXpath";
 
     /** Property name for the key of a map entry. */
@@ -48,16 +45,16 @@ public final class AvroXmlMapperConstants {
     /** Property name for the value of a map entry. */
     public static final String XPATH_MAP_VALUE_PROPERTY_NAME = "valueXpath";
 
-    /** Default namespace key. Corresponds to the base empty namespace defined in the XML document with xmlns="..." */
+    /** Default namespace key, corresponding to the empty namespace in the XML document. */
     public static final String DEFAULT_NAMESPACE = "null";
 
-    /** Key to retrieve the format date properties on timestamp Avro attributes. */
+    /** Key for date format properties on Avro timestamp fields. */
     public static final String FORMAT_PROPERTIES_KEY = "format";
 
-    /** Key to retrieve the time zone for date properties on timestamp Avro attributes. */
+    /** Key for time zone properties on Avro timestamp fields. */
     public static final String TIMEZONE_PROPERTIES_KEY = "timezone";
 
-    /** Key to retrieve the scaleOut properties on decimal Avro attributes. */
+    /** Key for scale-out properties on Avro decimal fields. */
     public static final String SCALEOUT_PROPERTIES_KEY = "scaleOut";
 
     /** Constant for the XML prefix "noprefixns". */
@@ -69,8 +66,9 @@ public final class AvroXmlMapperConstants {
     /** Constant to symbolize the position of an element. */
     public static final String XML_ATTRIBUTE_POSITION = "specialAttrPosition";
 
-    /** Regex to split a xpath into levels. */
+    /** Regular expression for splitting an XPath into levels. */
     public static final String REGEX_SPLIT_XPATH_LEVELS = "(?=/)(?![^\\[\\]]*])";
 
+    /** Private constructor. */
     private AvroXmlMapperConstants() {}
 }
