@@ -29,10 +29,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
           server-id: central
-          server-username: SONATYPE_USERNAME
-          server-password: SONATYPE_TOKEN
+          server-username-env-var: SONATYPE_USERNAME
+          server-password-env-var: SONATYPE_TOKEN
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          gpg-passphrase-env-var: MAVEN_GPG_PASSPHRASE
 
       - name: Cache SonarQube packages
         uses: actions/cache@v6
@@ -62,9 +62,8 @@ jobs:
 
       - name: Sonar
         if: matrix.java == '17' && github.event.pull_request.head.repo.fork == false
-        run: mvn verify sonar:sonar
+        run: mvn sonar:sonar
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Metadata
